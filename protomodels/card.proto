@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package protomodels;
+
+import "google/protobuf/timestamp.proto";
+
+message Card{
+    CardIndex index = 1;
+    repeated string labels = 2;
+    repeated string example_sentences = 3;
+    int32 familiarity = 4;
+    google.protobuf.Timestamp review_date = 5;
+}
+
+message RelatedCards{
+    repeated CardIndex synonyms = 1;
+    repeated CardIndex antonyms = 2;
+    CardIndex origin = 3;
+    repeated CardIndex derivatives = 4;
+    repeated CardIndex in_other_languages = 5;
+    repeated CardIndex others = 6;
+}
+
+message CardIndex{
+    string name = 1;
+    Language language = 2;
+}
+
+enum Language{
+    ENGLISH = 0;
+    JAPANESE = 1;
+    FRENCH = 2;
+}

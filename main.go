@@ -1,7 +1,7 @@
 package main
 
-import "github.com/STRockefeller/langdida-server/server"
+import "github.com/STRockefeller/langdida-server/delivery/ginserver"
 
 func main() {
-	server.Run(80)
+	ginserver.Run(80)
 }

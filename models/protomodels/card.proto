@@ -7,9 +7,10 @@ import "google/protobuf/timestamp.proto";
 message Card{
     CardIndex index = 1;
     repeated string labels = 2;
-    repeated string example_sentences = 3;
-    int32 familiarity = 4;
-    google.protobuf.Timestamp review_date = 5;
+    repeated string explanations = 3;
+    repeated string example_sentences = 4;
+    int32 familiarity = 5;
+    google.protobuf.Timestamp review_date = 6;
 }
 
 message RelatedCards{
@@ -30,4 +31,13 @@ enum Language{
     ENGLISH = 0;
     JAPANESE = 1;
     FRENCH = 2;
+}
+
+enum AssociationTypes{
+    SYNONYMS = 0;
+    ANTONYMS = 1;
+    ORIGIN = 2;
+    DERIVATIVES = 3;
+    IN_OTHER_LANGUAGES = 4;
+    OTHERS = 5;
 }

@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/STRockefeller/langdida-server/protomodels"
+	"github.com/STRockefeller/langdida-server/models/protomodels"
 )
 
 type Storage interface {

@@ -12,6 +12,10 @@ type CardService struct {
 	storage storage.Storage
 }
 
+func NewCardService(storage storage.Storage) *CardService {
+	return &CardService{storage: storage}
+}
+
 func (service CardService) GetCard(ctx context.Context, condition protomodels.CardIndex) (protomodels.Card, error) {
 	rep, err := service.storage.ListCards(ctx, []protomodels.CardIndex{condition})
 	if err != nil {
@@ -36,4 +40,5 @@ func (service CardService) ListCardsShouldBeReviewed(ctx context.Context, langua
 }
 
 func (service CardService) ListCardsByLabelsAndLanguage(ctx context.Context, labels []string, language protomodels.Language) ([]protomodels.Card, error)
+
 func (service CardService) SearchWithDictionary(ctx context.Context, cardIndex protomodels.CardIndex) (string, error)

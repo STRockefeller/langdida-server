@@ -1,69 +1,52 @@
 swagger: "2.0"
 info:
-  title: Card API
-  version: 1.0.0
-host: localhost:8080
-basePath: /
-schemes:
-  - http
-consumes:
-  - application/json
-produces:
-  - application/json
-
+  title: "Card API"
+  version: "1.0.0"
 paths:
-  /card/create:
+  /card:
     post:
-      summary: Create a new card
-      operationId: createCard
-      consumes:
-        - application/json
-      produces:
-        - application/json
+      summary: "Create a new card"
       parameters:
-        - name: body
-          in: body
+        - name: "card"
+          in: "body"
+          description: "Card object that needs to be added to the database"
           required: true
           schema:
-            type: object
-            properties:
-              card:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  number:
-                    type: string
-                  cvv:
-                    type: string
-                  expiry_date:
-                    type: string
-                  billing_address:
-                    type: object
-                    properties:
-                      street:
-                        type: string
-                      city:
-                        type: string
-                      state:
-                        type: string
-                      zip:
-                        type: string
-                  user:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                      email:
-                        type: string
-                      phone:
-                        type: string
-                  amount:
-                    type: number
-                  currency:
-                    type: string
+            $ref: "#/definitions/Card"
       responses:
-        '200':
-          description: Card created successfully
-        '400':
-          description: Invalid input
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Card"
+        "400":
+          description: "Bad Request"
+definitions:
+  Card:
+    type: "object"
+    properties:
+      index:
+        $ref: "#/definitions/CardIndex"
+      labels:
+        type: "array"
+        items:
+          type: "string"
+      explanations:
+        type: "array"
+        items:
+          type: "string"
+      example_sentences:
+        type: "array"
+        items:
+          type: "string"
+      familiarity:
+        type: "integer"
+        format: "int32"
+      review_date:
+        type: "string"
+  CardIndex:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      language:
+        type: "string"

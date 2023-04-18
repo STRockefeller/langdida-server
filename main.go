@@ -6,11 +6,14 @@ import (
 
 	"github.com/STRockefeller/langdida-server/configs"
 	"github.com/STRockefeller/langdida-server/delivery/ginserver"
+	"github.com/STRockefeller/langdida-server/internal/logger"
 	"github.com/STRockefeller/langdida-server/storage"
 	"github.com/STRockefeller/langdida-server/storage/sqlite"
 )
 
 func main() {
+	/* ---------------------------- initialize logger --------------------------- */
+	logger.InitialLogger()
 	/* ------------------------------- parse flags ------------------------------ */
 	configPath := flag.String("configs", "./assets/configs.yaml", "specify the config file, refer to configs.md")
 	flag.Parse()

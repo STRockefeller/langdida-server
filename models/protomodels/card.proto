@@ -9,6 +9,7 @@ message Card{
     repeated string           labels            = 2;
     repeated string           explanations      = 3;
     repeated string           example_sentences = 4;
+    // where 0 means not familiar at all, 10 means very familiar
     int32                     familiarity       = 5;
     google.protobuf.Timestamp review_date       = 6;
 }

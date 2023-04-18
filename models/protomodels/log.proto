@@ -2,12 +2,9 @@ syntax = "proto3";
 
 package protomodels;
 
-import "google/protobuf/timestamp.proto";
-
 message Log{
-    google.protobuf.Timestamp date           = 1;
+    string                    date           = 1;
     int32                     review_cards   = 2;
     int32                     new_cards      = 3;
     int32                     streak         = 4;
-    bool                      streak_updated = 5;
 }

@@ -30,3 +30,9 @@ type Storage interface {
 	// update card review date
 	ReviewCard(ctx context.Context, cardIndex protomodels.CardIndex) error
 }
+
+type ListCardsConditions struct {
+	NeedReview bool // true: need to review, false: all
+	Language   protomodels.Language
+	Tag        string
+}

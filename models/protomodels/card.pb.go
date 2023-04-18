@@ -87,10 +87,11 @@ func (AssociationTypes) EnumDescriptor() ([]byte, []int) {
 }
 
 type Card struct {
-	Index                *CardIndex           `protobuf:"bytes,1,opt,name=index,proto3" json:"index,omitempty"`
-	Labels               []string             `protobuf:"bytes,2,rep,name=labels,proto3" json:"labels,omitempty"`
-	Explanations         []string             `protobuf:"bytes,3,rep,name=explanations,proto3" json:"explanations,omitempty"`
-	ExampleSentences     []string             `protobuf:"bytes,4,rep,name=example_sentences,json=exampleSentences,proto3" json:"example_sentences,omitempty"`
+	Index            *CardIndex `protobuf:"bytes,1,opt,name=index,proto3" json:"index,omitempty"`
+	Labels           []string   `protobuf:"bytes,2,rep,name=labels,proto3" json:"labels,omitempty"`
+	Explanations     []string   `protobuf:"bytes,3,rep,name=explanations,proto3" json:"explanations,omitempty"`
+	ExampleSentences []string   `protobuf:"bytes,4,rep,name=example_sentences,json=exampleSentences,proto3" json:"example_sentences,omitempty"`
+	// where 0 means not familiar at all, 10 means very familiar
 	Familiarity          int32                `protobuf:"varint,5,opt,name=familiarity,proto3" json:"familiarity,omitempty"`
 	ReviewDate           *timestamp.Timestamp `protobuf:"bytes,6,opt,name=review_date,json=reviewDate,proto3" json:"review_date,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`

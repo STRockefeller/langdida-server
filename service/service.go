@@ -15,7 +15,7 @@ type CardService interface {
 	ListCardsByLabelsAndLanguage(ctx context.Context, labels []string, language protomodels.Language) ([]protomodels.Card, error)
 
 	// return url
-	SearchWithDictionary(ctx context.Context, cardIndex protomodels.CardIndex) (string, error)
+	SearchWithDictionary(ctx context.Context, cardIndex protomodels.CardIndex) ([]string, error)
 }
 
 type LogService interface {

@@ -13,14 +13,14 @@ type YamlConfigs struct {
 	UseSqlite   bool `yaml:"useSqlite"`
 	UsePostgres bool `yaml:"usePostgres"`
 	/* ---------------------------- delivery settings --------------------------- */
-	GinServerSettings GinServerSettings `yarm:"ginServerSettings"`
+	GinServerSettings GinServerSettings `yaml:"ginServerSettings"`
 	/* ---------------------------- storage settings ---------------------------- */
 	SqliteSettings   SqliteSettings   `yaml:"sqliteSettings"`
 	PostgresSettings PostgresSettings `yaml:"postgresSettings"`
 }
 
 type GinServerSettings struct {
-	Port int `yaml:"prot"`
+	Port int `yaml:"port"`
 }
 
 type SqliteSettings struct {

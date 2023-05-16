@@ -23,8 +23,11 @@ type LogService interface {
 }
 
 type ExerciseService interface {
-	CreateChoiceProblems(ctx context.Context, cards protomodels.CardIndex) (problems []string, answers []string, err error)
-	CreateFillingProblems(ctx context.Context, cards protomodels.CardIndex) (problems []string, answers []string, err error)
+	CreateChoiceProblems(ctx context.Context, cards []protomodels.CardIndex) (problems []string, answers []string, err error)
+	CreateFillingProblems(ctx context.Context, cards []protomodels.CardIndex) (problems []string, answers []string, err error)
 }
 
-type IOService interface{}
+type IOService interface {
+	ImportFromURL(ctx context.Context, url string) (string, error)
+	ImportFromFile(ctx context.Context, filePath string) (string, error)
+}

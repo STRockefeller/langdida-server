@@ -10,7 +10,12 @@ require (
 )
 
 require (
+	github.com/PuerkitoBio/goquery v1.8.1 // indirect
+	github.com/STRockefeller/article-crawler v1.0.1 // indirect
 	github.com/STRockefeller/dictionaries v0.0.0-20230418055520-d602c50bb54f // indirect
+	github.com/STRockefeller/problems v0.0.0-20230331081955-00ea32642bf8 // indirect
+	github.com/andybalholm/cascadia v1.3.1 // indirect
+	github.com/brianvoe/gofakeit/v6 v6.20.2 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect

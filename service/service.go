@@ -29,5 +29,4 @@ type ExerciseService interface {
 
 type IOService interface {
 	ImportFromURL(ctx context.Context, url string) (string, error)
-	ImportFromFile(ctx context.Context, filePath string) (string, error)
 }

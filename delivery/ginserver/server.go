@@ -11,13 +11,14 @@ import (
 
 func Run(port int, storage storage.Storage) {
 	router := gin.Default()
-	router.Run(":" + strconv.Itoa(port))
-	zap.L().Info("server started", zap.Int("port", port))
 
 	setupCardService(router, instance.NewCardService(storage))
 	setupExerciseService(router, instance.NewExerciseService(storage))
 	setupIOService(router, instance.NewIOService())
 	router.GET("/ping", pingHandler)
+
+	router.Run(":" + strconv.Itoa(port))
+	zap.L().Info("server started", zap.Int("port", port))
 }
 
 func pingHandler(ctx *gin.Context) {

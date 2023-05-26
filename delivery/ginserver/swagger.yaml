@@ -132,28 +132,27 @@ paths:
           description: Bad request
 
   /io/import/url:
-    post:
-      summary: Import an article from a URL
+    get:
+      summary: Import content from URL
+      parameters:
+        - in: query
+          name: url
+          required: true
+          schema:
+            type: string
+          description: The URL of the content to import
       responses:
         '200':
-          description: Successful response
+          description: OK
           content:
             application/json:
               schema:
-                type: string
-                example: OK
+                type: object
+                properties:
+                  content:
+                    type: string
         '400':
-          description: Bad request
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                url:
-                  type: string
-                  example: https://www.example.com
+          description: Bad Request
 
   /ping:
     get:

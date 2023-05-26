@@ -6,7 +6,7 @@ import (
 )
 
 func setupIOService(router *gin.Engine, service *instance.IOService) {
-	router.POST("/io/import/url", newImportURLHandler(service))
+	router.GET("/io/import/url", newImportURLHandler(service))
 }
 
 func newImportURLHandler(service *instance.IOService) func(*gin.Context) {

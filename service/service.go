@@ -11,7 +11,7 @@ type CardService interface {
 	CreateCard(ctx context.Context, card protomodels.Card) error
 	// renew the review date
 	EditCard(ctx context.Context, card protomodels.Card) error
-	ListCardsShouldBeReviewed(ctx context.Context) ([]protomodels.Card, error)
+	ListCardsShouldBeReviewed(ctx context.Context, language protomodels.Language) ([]protomodels.Card, error)
 	ListCardsByLabelsAndLanguage(ctx context.Context, labels []string, language protomodels.Language) ([]protomodels.Card, error)
 
 	// return url

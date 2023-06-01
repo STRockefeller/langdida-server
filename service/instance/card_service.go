@@ -7,6 +7,7 @@ import (
 	"github.com/STRockefeller/dictionaries"
 	"github.com/STRockefeller/go-linq"
 	"github.com/STRockefeller/langdida-server/models/protomodels"
+	"github.com/STRockefeller/langdida-server/service"
 	"github.com/STRockefeller/langdida-server/storage"
 )
 
@@ -14,7 +15,7 @@ type CardService struct {
 	storage storage.Storage
 }
 
-func NewCardService(storage storage.Storage) *CardService {
+func NewCardService(storage storage.Storage) service.CardService {
 	return &CardService{storage: storage}
 }
 

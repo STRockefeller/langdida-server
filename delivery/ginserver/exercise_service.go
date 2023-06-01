@@ -2,16 +2,16 @@ package ginserver
 
 import (
 	"github.com/STRockefeller/langdida-server/models/protomodels"
-	"github.com/STRockefeller/langdida-server/service/instance"
+	"github.com/STRockefeller/langdida-server/service"
 	"github.com/gin-gonic/gin"
 )
 
-func setupExerciseService(router *gin.Engine, service *instance.ExerciseService) {
+func setupExerciseService(router *gin.Engine, service service.ExerciseService) {
 	router.POST("/exercise/choice", newChoiceProblemsHandler(service))
 	router.POST("/exercise/filling", newFillingProblemsHandler(service))
 }
 
-func newChoiceProblemsHandler(service *instance.ExerciseService) func(*gin.Context) {
+func newChoiceProblemsHandler(service service.ExerciseService) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		var cards []protomodels.CardIndex
 		if err := ctx.BindJSON(&cards); err != nil {
@@ -27,7 +27,7 @@ func newChoiceProblemsHandler(service *instance.ExerciseService) func(*gin.Conte
 	}
 }
 
-func newFillingProblemsHandler(service *instance.ExerciseService) func(*gin.Context) {
+func newFillingProblemsHandler(service service.ExerciseService) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		var cards []protomodels.CardIndex
 		if err := ctx.BindJSON(&cards); err != nil {

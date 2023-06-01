@@ -4,17 +4,17 @@ import (
 	"net/http"
 
 	"github.com/STRockefeller/langdida-server/models/protomodels"
-	"github.com/STRockefeller/langdida-server/service/instance"
+	"github.com/STRockefeller/langdida-server/service"
 	"github.com/gin-gonic/gin"
 )
 
-func setupCardService(router *gin.Engine, service *instance.CardService) {
+func setupCardService(router *gin.Engine, service service.CardService) {
 	router.POST("/card/create", newCreateCardHandler(service))
 	router.POST("/card/edit", newEditCardHandler(service))
 	router.GET("/card/get", newGetCardHandler(service))
 }
 
-func newCreateCardHandler(service *instance.CardService) func(*gin.Context) {
+func newCreateCardHandler(service service.CardService) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		var card protomodels.Card
 		if err := ctx.BindJSON(&card); err != nil {
@@ -26,7 +26,7 @@ func newCreateCardHandler(service *instance.CardService) func(*gin.Context) {
 	}
 }
 
-func newEditCardHandler(service *instance.CardService) func(*gin.Context) {
+func newEditCardHandler(service service.CardService) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		var card protomodels.Card
 		if err := ctx.BindJSON(&card); err != nil {
@@ -50,7 +50,7 @@ func langMapping(lang string) protomodels.Language {
 	return protomodels.Language_ENGLISH
 }
 
-func newGetCardHandler(service *instance.CardService) func(*gin.Context) {
+func newGetCardHandler(service service.CardService) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		lang := ctx.Query("language")
 		word := ctx.Query("word")

@@ -1,8 +1,9 @@
 package ginserver
 
 import (
-	"github.com/STRockefeller/langdida-server/service"
 	"github.com/gin-gonic/gin"
+
+	"github.com/STRockefeller/langdida-server/service"
 )
 
 func setupIOService(router *gin.Engine, service service.IOService) {

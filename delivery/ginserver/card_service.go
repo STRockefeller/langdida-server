@@ -3,9 +3,10 @@ package ginserver
 import (
 	"net/http"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/STRockefeller/langdida-server/models/protomodels"
 	"github.com/STRockefeller/langdida-server/service"
-	"github.com/gin-gonic/gin"
 )
 
 func setupCardService(router *gin.Engine, service service.CardService) {

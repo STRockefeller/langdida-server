@@ -3,11 +3,12 @@ package ginserver
 import (
 	"strconv"
 
-	"github.com/STRockefeller/langdida-server/service/instance"
-	"github.com/STRockefeller/langdida-server/storage"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+
+	"github.com/STRockefeller/langdida-server/service/instance"
+	"github.com/STRockefeller/langdida-server/storage"
 )
 
 func Run(port int, storage storage.Storage) {

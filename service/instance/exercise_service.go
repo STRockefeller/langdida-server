@@ -4,9 +4,10 @@ import (
 	"context"
 
 	"github.com/STRockefeller/go-linq"
+	problemGenerator "github.com/STRockefeller/problems"
+
 	"github.com/STRockefeller/langdida-server/models/protomodels"
 	"github.com/STRockefeller/langdida-server/storage"
-	problemGenerator "github.com/STRockefeller/problems"
 )
 
 type ExerciseService struct {

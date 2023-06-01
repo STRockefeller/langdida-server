@@ -47,10 +47,9 @@ func convertCardModels(cards linq.Linq[gm.Card]) []protomodels.Card {
 func (storage Storage) ListCards(ctx context.Context, cardIndex []protomodels.CardIndex) ([]protomodels.Card, error) {
 	result, err := glinq.NewDB[gm.Card](storage.db).
 		WhereRaw(`(name, language) IN ?`,
-			linq.Select(
-				linq.NewLinq(cardIndex),
-				func(c protomodels.CardIndex) [2]any { return [2]any{c.Name, c.Language} },
-			).ToSlice()).Find(ctx)
+			linq.
+				Select(cardIndex, func(c protomodels.CardIndex) [2]any { return [2]any{c.Name, c.Language} }).
+				ToSlice()).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -61,9 +60,7 @@ func (storage Storage) ListCards(ctx context.Context, cardIndex []protomodels.Ca
 //  - needReview: true => need to review, false => all
 func (storage Storage) ListCardsWithConditions(ctx context.Context, needReview bool, language protomodels.Language) ([]protomodels.Card, error) {
 	date := itime.NewFromTime(time.Now())
-	result, err := glinq.NewDB[gm.Card](storage.db).Where(gm.Card{
-		Language: language,
-	}).WhereRaw(`review_date < ?`, date).Find(ctx)
+	result, err := glinq.NewDB[gm.Card](storage.db).WhereRaw(`language = ? AND review_date < ?`, language, date).Find(ctx)
 
 	if err != nil {
 		return nil, err
@@ -94,7 +91,7 @@ func (storage Storage) CreateCard(ctx context.Context, card protomodels.Card) er
 
 // zero values will NOT been updated
 func (storage Storage) UpdateCard(ctx context.Context, card protomodels.Card) error {
-	_, err := glinq.NewDB[gm.Card](storage.db).Updates(ctx, gm.NewCard(card))
+	_, err := glinq.NewDB[gm.Card](storage.db).WhereRaw(`name = ? AND language = ?`, card.Index.Name, card.Index.Language).Updates(ctx, gm.NewCard(card))
 	return err
 }
 

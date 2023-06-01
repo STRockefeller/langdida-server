@@ -24,7 +24,7 @@ func (service CardService) GetCard(ctx context.Context, condition protomodels.Ca
 		return protomodels.Card{}, err
 	}
 	if len(rep) == 1 {
-		return rep[1], nil
+		return rep[0], nil
 	}
 	return protomodels.Card{}, fmt.Errorf("more than 1 cards found")
 }

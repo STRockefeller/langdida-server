@@ -13,7 +13,7 @@ type Card struct {
 	Labels           ArrayOfStrings `gorm:"type:text;"`
 	Explanations     ArrayOfStrings `gorm:"type:text;"`
 	ExampleSentences ArrayOfStrings `gorm:"type:text;"`
-	Familiarity      int32
+	Familiarity      int32          `json:"omitempty"`
 	ReviewDate       time.UnixTime
 }
 

@@ -13,6 +13,7 @@ func setupCardService(router *gin.Engine, service service.CardService) {
 	router.POST("/card/create", newCreateCardHandler(service))
 	router.POST("/card/edit", newEditCardHandler(service))
 	router.GET("/card/get", newGetCardHandler(service))
+	router.GET("/card/dictionary/meanings", newSearchMeaningsHandler(service))
 }
 
 func newCreateCardHandler(service service.CardService) func(*gin.Context) {
@@ -39,27 +40,28 @@ func newEditCardHandler(service service.CardService) func(*gin.Context) {
 	}
 }
 
-func langMapping(lang string) protomodels.Language {
-	switch lang {
-	case "en":
-		return protomodels.Language_ENGLISH
-	case "jp":
-		return protomodels.Language_JAPANESE
-	case "fr":
-		return protomodels.Language_FRENCH
-	}
-	return protomodels.Language_ENGLISH
-}
-
 func newGetCardHandler(service service.CardService) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		lang := ctx.Query("language")
 		word := ctx.Query("word")
-		card, err := service.GetCard(ctx, protomodels.CardIndex{Language: langMapping(lang), Name: word})
+		card, err := service.GetCard(ctx, protomodels.CardIndex{Language: protomodels.LangMapping(lang), Name: word})
 		if err != nil {
 			ctx.AbortWithStatus(http.StatusBadRequest)
 			return
 		}
 		ctx.JSON(http.StatusOK, card)
+	}
+}
+
+func newSearchMeaningsHandler(service service.CardService) func(*gin.Context) {
+	return func(ctx *gin.Context) {
+		lang := ctx.Query("language")
+		word := ctx.Query("word")
+		meanings, err := service.SearchWithDictionary(ctx, protomodels.CardIndex{Language: protomodels.LangMapping(lang), Name: word})
+		if err != nil {
+			ctx.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
+		ctx.JSON(http.StatusOK, meanings)
 	}
 }

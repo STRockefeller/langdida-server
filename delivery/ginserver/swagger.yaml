@@ -154,6 +154,35 @@ paths:
         '400':
           description: Bad Request
 
+  /card/dictionary/meanings:
+    get:
+      summary: Search meanings in the card dictionary
+      parameters:
+        - in: query
+          name: language
+          required: true
+          schema:
+            type: string
+          description: The language of the word
+        - in: query
+          name: word
+          required: true
+          schema:
+            type: string
+          description: The word to search for
+      responses:
+        '200':
+          description: Successful response with the list of meanings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          description: Bad request
+      x-handler: newSearchMeaningsHandler
+
   /ping:
     get:
       summary: Ping the server

@@ -61,10 +61,46 @@ func (c *Card) UnmarshalJSON(data []byte) error {
 }
 
 type jsonTempCard struct {
-	Index            *CardIndex `json:"index,omitempty"`
-	Labels           []string   `json:"labels,omitempty"`
-	Explanations     []string   `json:"explanations,omitempty"`
-	ExampleSentences []string   `json:"example_sentences,omitempty"`
-	Familiarity      int32      `json:"familiarity,omitempty"`
-	ReviewDate       string     `json:"review_date,omitempty"`
+	Index            *CardIndex `json:"index"`
+	Labels           []string   `json:"labels"`
+	Explanations     []string   `json:"explanations"`
+	ExampleSentences []string   `json:"example_sentences"`
+	Familiarity      int32      `json:"familiarity"`
+	ReviewDate       string     `json:"review_date"`
+}
+
+type jsonTempCardIndex struct {
+	Name     string `json:"name"`
+	Language string `json:"language"`
+}
+
+func (c CardIndex) MarshalJSON() ([]byte, error) {
+	tmp := jsonTempCardIndex{
+		Name:     c.Name,
+		Language: c.Language.String(),
+	}
+	return json.Marshal(tmp)
+}
+
+func (c *CardIndex) UnmarshalJSON(data []byte) error {
+	var tmp jsonTempCardIndex
+	err := json.Unmarshal(data, &tmp)
+	if err != nil {
+		return err
+	}
+	c.Name = tmp.Name
+	c.Language = LangMapping(tmp.Language)
+	return nil
+}
+
+func LangMapping(shortLang string) Language {
+	switch shortLang {
+	case "en":
+		return Language_ENGLISH
+	case "jp":
+		return Language_JAPANESE
+	case "fr":
+		return Language_FRENCH
+	}
+	return Language_ENGLISH
 }

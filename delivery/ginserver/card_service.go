@@ -11,7 +11,7 @@ import (
 
 func setupCardService(router *gin.Engine, service service.CardService) {
 	router.POST("/card/create", newCreateCardHandler(service))
-	router.POST("/card/edit", newEditCardHandler(service))
+	router.PUT("/card/edit", newEditCardHandler(service))
 	router.GET("/card/get", newGetCardHandler(service))
 	router.GET("/card/dictionary/meanings", newSearchMeaningsHandler(service))
 }
@@ -35,7 +35,10 @@ func newEditCardHandler(service service.CardService) func(*gin.Context) {
 			ctx.AbortWithStatus(http.StatusBadRequest)
 			return
 		}
-		service.EditCard(ctx, card)
+		if err := service.EditCard(ctx, card); err != nil {
+			ctx.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
 		ctx.JSON(http.StatusOK, "OK")
 	}
 }

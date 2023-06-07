@@ -95,11 +95,11 @@ func (c *CardIndex) UnmarshalJSON(data []byte) error {
 
 func LangMapping(shortLang string) Language {
 	switch shortLang {
-	case "en":
+	case "en", "ENGLISH":
 		return Language_ENGLISH
-	case "jp":
+	case "jp", "JAPANESE":
 		return Language_JAPANESE
-	case "fr":
+	case "fr", "FRENCH":
 		return Language_FRENCH
 	}
 	return Language_ENGLISH

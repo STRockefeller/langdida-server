@@ -86,7 +86,7 @@ paths:
           description: Bad request
 
   /card/edit:
-    post:
+    put:
       summary: Edit an existing card
       requestBody:
         required: true

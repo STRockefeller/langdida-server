@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/STRockefeller/dictionaries"
-	"github.com/STRockefeller/go-linq"
 
 	"github.com/STRockefeller/langdida-server/models/protomodels"
 	"github.com/STRockefeller/langdida-server/service"
@@ -39,23 +38,8 @@ func (service CardService) EditCard(ctx context.Context, card protomodels.Card) 
 	return service.storage.UpdateCard(ctx, card)
 }
 
-func (service CardService) ListCardsShouldBeReviewed(ctx context.Context, language protomodels.Language) ([]protomodels.Card, error) {
-	return service.storage.ListCardsWithConditions(ctx, true, language)
-}
-
-func (service CardService) ListCardsByLabelsAndLanguage(ctx context.Context, labels []string, language protomodels.Language) ([]protomodels.Card, error) {
-	cards, err := service.storage.ListCardsWithConditions(ctx, false, language)
-	if err != nil {
-		return nil, err
-	}
-	return linq.NewLinq(cards).Where(func(card protomodels.Card) bool {
-		for _, label := range labels {
-			if !linq.NewLinq(card.Labels).Contains(label) {
-				return false
-			}
-		}
-		return true
-	}).ToSlice(), nil
+func (servuce CardService) ListCards(ctx context.Context, conditions storage.ListCardsConditions) ([]protomodels.Card, error) {
+	return servuce.storage.ListCardsWithConditions(ctx, conditions)
 }
 
 func (service CardService) SearchWithDictionary(ctx context.Context, cardIndex protomodels.CardIndex) ([]string, error) {

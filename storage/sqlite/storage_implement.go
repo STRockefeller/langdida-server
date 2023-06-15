@@ -15,6 +15,7 @@ import (
 	itime "github.com/STRockefeller/langdida-server/internal/time"
 	gm "github.com/STRockefeller/langdida-server/models/gormmodels"
 	"github.com/STRockefeller/langdida-server/models/protomodels"
+	"github.com/STRockefeller/langdida-server/storage"
 )
 
 func NewStorage(dbPath string, migrateTables bool) *Storage {
@@ -59,15 +60,39 @@ func (storage Storage) ListCards(ctx context.Context, cardIndex []protomodels.Ca
 
 // arguments details:
 //  - needReview: true => need to review, false => all
-func (storage Storage) ListCardsWithConditions(ctx context.Context, needReview bool, language protomodels.Language) ([]protomodels.Card, error) {
-	date := itime.NewFromTime(time.Now())
-	result, err := glinq.NewDB[gm.Card](storage.db).WhereRaw(`language = ? AND review_date < ?`, language, date).Find(ctx)
-
+func (storage Storage) ListCardsWithConditions(ctx context.Context, conditions storage.ListCardsConditions) ([]protomodels.Card, error) {
+	result, err := listCardsFilters(conditions, glinq.NewDB[gm.Card](storage.db)).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	return convertCardModels(result), nil
+}
+
+func listCardsFilters(conditions storage.ListCardsConditions, db glinq.DB[gm.Card]) glinq.DB[gm.Card] {
+	if conditions.NeedReview {
+		date := itime.NewFromTime(time.Now())
+		db = filterReviewDate(date, db)
+	}
+	if conditions.Label != "" {
+		db = filterLabel(conditions.Label, db)
+	}
+	if conditions.Language != nil {
+		db = filterLanguage(*conditions.Language, db)
+	}
+	return db
+}
+
+func filterLanguage(language protomodels.Language, db glinq.DB[gm.Card]) glinq.DB[gm.Card] {
+	return db.WhereRaw(`language = ?`, language)
+}
+
+func filterReviewDate(date itime.UnixTime, db glinq.DB[gm.Card]) glinq.DB[gm.Card] {
+	return db.WhereRaw(`review_date < ?`, date)
+}
+
+func filterLabel(label string, db glinq.DB[gm.Card]) glinq.DB[gm.Card] {
+	return db.WhereRaw(`labels LIKE ?`, "%"+label+"%")
 }
 
 // upsert to logs NewCards++
@@ -97,11 +122,11 @@ func (storage Storage) UpdateCard(ctx context.Context, card protomodels.Card) er
 }
 
 func (storage Storage) DeleteCard(ctx context.Context, cardIndex protomodels.CardIndex) error {
-	cond := gm.Card{
+	condition := gm.Card{
 		Name:     cardIndex.Name,
 		Language: cardIndex.Language,
 	}
-	_, err := glinq.NewDB[gm.Card](storage.db).Where(cond).Delete(ctx, cond)
+	_, err := glinq.NewDB[gm.Card](storage.db).Where(condition).Delete(ctx, condition)
 	return err
 }
 

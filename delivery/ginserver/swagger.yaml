@@ -131,6 +131,41 @@ paths:
         '400':
           description: Bad request
 
+  /card/list:
+    get:
+      summary: list cards according to the specified conditions
+      parameters:
+        - in: query
+          name: language
+          required: false
+          schema:
+            type: string
+          description: The language of the word
+        - in: query
+          name: needReview
+          required: false
+          schema:
+            type: string
+          description: specify this field to show the SRS ones only
+        - in: query
+          name: label
+          required: false
+          schema:
+            type: string
+          description: specify this field to show the cards which contains the specified label
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Card'
+        '400':
+          description: Bad request
+      x-handler: newListCardsHandler
+
   /io/import/url:
     get:
       summary: Import content from URL

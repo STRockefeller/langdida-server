@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/STRockefeller/langdida-server/models/protomodels"
+	"github.com/STRockefeller/langdida-server/storage"
 )
 
 type CardService interface {
@@ -11,8 +12,7 @@ type CardService interface {
 	CreateCard(ctx context.Context, card protomodels.Card) error
 	// renew the review date
 	EditCard(ctx context.Context, card protomodels.Card) error
-	ListCardsShouldBeReviewed(ctx context.Context, language protomodels.Language) ([]protomodels.Card, error)
-	ListCardsByLabelsAndLanguage(ctx context.Context, labels []string, language protomodels.Language) ([]protomodels.Card, error)
+	ListCards(ctx context.Context, conditions storage.ListCardsConditions) ([]protomodels.Card, error)
 
 	// return url
 	SearchWithDictionary(ctx context.Context, cardIndex protomodels.CardIndex) ([]string, error)

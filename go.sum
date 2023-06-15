@@ -10,6 +10,8 @@ github.com/STRockefeller/go-linq v1.0.0 h1:q5inMC05O5B6lhQt5HQLhyN3t4wFvz+wDjO9m
 github.com/STRockefeller/go-linq v1.0.0/go.mod h1:b7dK6/s9Z9V7s9MfNl4nfYgsfP9xtEglWYHKRiMuZkY=
 github.com/STRockefeller/gorm-linq v0.1.0 h1:XwbSHMVPCdyPYvOTozb56meVatvhugcX1xCcSTYFLzw=
 github.com/STRockefeller/gorm-linq v0.1.0/go.mod h1:yd96trppEaIqUOd/fVbJa4xAzysA6JplLrk6oa84pLY=
+github.com/STRockefeller/gorm-linq v0.1.1 h1:XESTOue+QbVs/pbaxGqTNbdVTmQl3LWNkzxa79dXsqY=
+github.com/STRockefeller/gorm-linq v0.1.1/go.mod h1:hdLzg2tNuKx4FfeE/5ehlXeHoqIn25uOTYhWPPZhKu4=
 github.com/STRockefeller/problems v0.0.0-20230331081955-00ea32642bf8 h1:z0JtdIQ6sOkMSOIHa1Qc4/ehSTpl1OJC4y9UmU0V+pE=
 github.com/STRockefeller/problems v0.0.0-20230331081955-00ea32642bf8/go.mod h1:Qv04ewaRUkgnUDTCx8M1KTSmGJutvqI7fhS00Kg6M9c=
 github.com/STRockefeller/testutils v0.1.0 h1:96TrBRVgYL/lnjiBlVOZX9jYjtnjjQ8KoavW5IvXkkk=
@@ -193,4 +195,6 @@ gorm.io/driver/sqlite v1.4.4/go.mod h1:0Aq3iPO+v9ZKbcdiz8gLWRw5VOPcBOPUQJFLq5e2e
 gorm.io/gorm v1.24.0/go.mod h1:DVrVomtaYTbqs7gB/x2uVvqnXzv0nqjB396B8cG4dBA=
 gorm.io/gorm v1.24.6 h1:wy98aq9oFEetsc4CAbKD2SoBCdMzsbSIvSUUFJuHi5s=
 gorm.io/gorm v1.24.6/go.mod h1:L4uxeKpfBml98NYqVqwAdmV1a2nBtAec/cf3fpucW/k=
+gorm.io/gorm v1.25.1 h1:nsSALe5Pr+cM3V1qwwQ7rOkw+6UeLrX5O4v3llhHa64=
+gorm.io/gorm v1.25.1/go.mod h1:L4uxeKpfBml98NYqVqwAdmV1a2nBtAec/cf3fpucW/k=
 rsc.io/pdf v0.1.1/go.mod h1:n8OzWcQ6Sp37PL01nO98y4iUCRdTGarVfzxY20ICaU4=

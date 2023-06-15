@@ -47,7 +47,7 @@ func convertCardModels(cards linq.Linq[gm.Card]) []protomodels.Card {
 }
 
 func (storage Storage) ListCards(ctx context.Context, cardIndex []protomodels.CardIndex) ([]protomodels.Card, error) {
-	result, err := glinq.NewDB[gm.Card](storage.db).
+	result, err := storage.cardTable().
 		WhereRaw(`(name, language) IN ?`,
 			linq.
 				Select(cardIndex, func(c protomodels.CardIndex) [2]any { return [2]any{c.Name, c.Language} }).
@@ -58,10 +58,23 @@ func (storage Storage) ListCards(ctx context.Context, cardIndex []protomodels.Ca
 	return convertCardModels(result), nil
 }
 
+func (storage Storage) ListCardIndexes(ctx context.Context) ([]protomodels.CardIndex, error) {
+	card, err := storage.cardTable().SelectRaw(`name, language`).Find(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return linq.Select(card, func(c gm.Card) protomodels.CardIndex {
+		return protomodels.CardIndex{
+			Name:     c.Name,
+			Language: c.Language,
+		}
+	}), nil
+}
+
 // arguments details:
 //  - needReview: true => need to review, false => all
 func (storage Storage) ListCardsWithConditions(ctx context.Context, conditions storage.ListCardsConditions) ([]protomodels.Card, error) {
-	result, err := listCardsFilters(conditions, glinq.NewDB[gm.Card](storage.db)).Find(ctx)
+	result, err := listCardsFilters(conditions, storage.cardTable()).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -105,19 +118,19 @@ func (storage Storage) CreateCard(ctx context.Context, card protomodels.Card) er
 			return err
 		}
 	} else {
-		if _, err := glinq.NewDB[gm.Log](storage.db).
+		if _, err := storage.logTable().
 			Where(gm.Log{Date: log.Date}).
 			Updates(ctx, log.WithNewCard()); err != nil {
 			return err
 		}
 	}
 
-	return glinq.NewDB[gm.Card](storage.db).Create(ctx, gm.NewCard(card))
+	return storage.cardTable().Create(ctx, gm.NewCard(card))
 }
 
 // zero values will NOT been updated
 func (storage Storage) UpdateCard(ctx context.Context, card protomodels.Card) error {
-	_, err := glinq.NewDB[gm.Card](storage.db).WhereRaw(`name = ? AND language = ?`, card.Index.Name, card.Index.Language).Updates(ctx, gm.NewCard(card))
+	_, err := storage.cardTable().WhereRaw(`name = ? AND language = ?`, card.Index.Name, card.Index.Language).Updates(ctx, gm.NewCard(card))
 	return err
 }
 
@@ -126,7 +139,7 @@ func (storage Storage) DeleteCard(ctx context.Context, cardIndex protomodels.Car
 		Name:     cardIndex.Name,
 		Language: cardIndex.Language,
 	}
-	_, err := glinq.NewDB[gm.Card](storage.db).Where(condition).Delete(ctx, condition)
+	_, err := storage.cardTable().Where(condition).Delete(ctx)
 	return err
 }
 
@@ -139,7 +152,7 @@ func (storage Storage) GetLog(ctx context.Context, date time.Time) (protomodels.
 }
 
 func (storage Storage) ListLogs(ctx context.Context, from time.Time, until time.Time) ([]protomodels.Log, error) {
-	result, err := glinq.NewDB[gm.Log](storage.db).
+	result, err := storage.logTable().
 		WhereRaw(`date >= ? AND date <= ?`, dayFormat(from), dayFormat(until)).
 		Find(ctx)
 	if err != nil {
@@ -159,7 +172,7 @@ func (storage Storage) ReviewCard(ctx context.Context, cardIndex protomodels.Car
 			return err
 		}
 	} else {
-		if _, err := glinq.NewDB[gm.Log](storage.db).
+		if _, err := storage.logTable().
 			Where(gm.Log{Date: log.Date}).
 			Updates(ctx, log.WithReviewedCard()); err != nil {
 			return err
@@ -175,7 +188,7 @@ func (storage Storage) ReviewCard(ctx context.Context, cardIndex protomodels.Car
 		return err
 	}
 
-	_, err = glinq.NewDB[gm.Card](storage.db).
+	_, err = storage.cardTable().
 		Where(gm.Card{
 			Name:     cardIndex.Name,
 			Language: cardIndex.Language,
@@ -188,15 +201,15 @@ func (storage Storage) ReviewCard(ctx context.Context, cardIndex protomodels.Car
 }
 
 func (storage Storage) createLog(ctx context.Context, log gm.Log) error {
-	return glinq.NewDB[gm.Log](storage.db).Create(ctx, log)
+	return storage.logTable().Create(ctx, log)
 }
 
 func (storage Storage) getLog(ctx context.Context, date time.Time) (gm.Log, error) {
-	return glinq.NewDB[gm.Log](storage.db).Where(gm.Log{Date: dayFormat(date)}).Take(ctx)
+	return storage.logTable().Where(gm.Log{Date: dayFormat(date)}).Take(ctx)
 }
 
 func (storage Storage) streak(ctx context.Context, date time.Time) int32 {
-	log, err := glinq.NewDB[gm.Log](storage.db).
+	log, err := storage.logTable().
 		Where(gm.Log{Date: dayFormat(oneDayBefore(date))}).
 		Take(ctx)
 	if err != nil {

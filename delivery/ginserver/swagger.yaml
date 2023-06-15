@@ -166,6 +166,21 @@ paths:
           description: Bad request
       x-handler: newListCardsHandler
 
+  /cards/index/list:
+    get:
+      summary: Get a list of card indexes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CardIndex'
+        '500':
+          description: Internal Server Error
+
   /io/import/url:
     get:
       summary: Import content from URL

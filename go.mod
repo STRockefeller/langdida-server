@@ -9,7 +9,7 @@ require (
 	github.com/gin-gonic/gin v1.9.0
 	github.com/golang/protobuf v1.5.2
 	gorm.io/driver/sqlite v1.4.4
-	gorm.io/gorm v1.24.6
+	gorm.io/gorm v1.25.1
 )
 
 require (
@@ -23,7 +23,7 @@ require (
 
 require (
 	github.com/STRockefeller/go-linq v1.0.0
-	github.com/STRockefeller/gorm-linq v0.1.0
+	github.com/STRockefeller/gorm-linq v0.1.1
 	github.com/bytedance/sonic v1.8.4 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/gin-contrib/cors v1.4.0

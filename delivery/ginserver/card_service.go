@@ -17,6 +17,7 @@ func setupCardService(router *gin.Engine, service service.CardService) {
 	router.GET("/card/get", newGetCardHandler(service))
 	router.GET("/card/dictionary/meanings", newSearchMeaningsHandler(service))
 	router.GET("/card/list", newListCardsHandler(service))
+	router.GET("/card/index/list", newListCardIndexesHandler(service))
 }
 
 func newCreateCardHandler(service service.CardService) func(*gin.Context) {
@@ -91,5 +92,16 @@ func newListCardsHandler(service service.CardService) func(*gin.Context) {
 			return
 		}
 		ctx.JSON(http.StatusOK, cards)
+	}
+}
+
+func newListCardIndexesHandler(service service.CardService) func(*gin.Context) {
+	return func(ctx *gin.Context) {
+		indexes, err := service.ListIndexes(ctx)
+		if err != nil {
+			ctx.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+		ctx.JSON(http.StatusOK, indexes)
 	}
 }

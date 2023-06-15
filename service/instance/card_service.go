@@ -59,3 +59,7 @@ func (service CardService) SearchWithDictionary(ctx context.Context, cardIndex p
 		return nil, fmt.Errorf("unsupported language")
 	}
 }
+
+func (service CardService) ListIndexes(ctx context.Context) ([]protomodels.CardIndex, error) {
+	return service.storage.ListCardIndexes(ctx)
+}

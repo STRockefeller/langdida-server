@@ -18,6 +18,8 @@ func setupCardService(router *gin.Engine, service service.CardService) {
 	router.GET("/card/dictionary/meanings", newSearchMeaningsHandler(service))
 	router.GET("/card/list", newListCardsHandler(service))
 	router.GET("/card/index/list", newListCardIndexesHandler(service))
+	router.GET("/card/association", newGetAssociationHandler(service))
+	router.POST("card/association/create", newCreateAssociationHandler(service))
 }
 
 func newCreateCardHandler(service service.CardService) func(*gin.Context) {
@@ -27,7 +29,10 @@ func newCreateCardHandler(service service.CardService) func(*gin.Context) {
 			ctx.AbortWithStatus(http.StatusBadRequest)
 			return
 		}
-		service.CreateCard(ctx, card)
+		if err := service.CreateCard(ctx, card); err != nil {
+			ctx.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
 		ctx.JSON(http.StatusOK, "OK")
 	}
 }
@@ -103,5 +108,33 @@ func newListCardIndexesHandler(service service.CardService) func(*gin.Context) {
 			return
 		}
 		ctx.JSON(http.StatusOK, indexes)
+	}
+}
+
+func newGetAssociationHandler(service service.CardService) func(*gin.Context) {
+	return func(ctx *gin.Context) {
+		lang := ctx.Query("language")
+		word := ctx.Query("word")
+		cards, err := service.GetAssociations(ctx, protomodels.CardIndex{Language: protomodels.LangMapping(lang), Name: word})
+		if err != nil {
+			ctx.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
+		ctx.JSON(http.StatusOK, cards)
+	}
+}
+
+func newCreateAssociationHandler(service service.CardService) func(*gin.Context) {
+	return func(ctx *gin.Context) {
+		var conditions storage.CreateAssociationConditions
+		if err := ctx.BindJSON(&conditions); err != nil {
+			ctx.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
+		if err := service.CreateAssociations(ctx, conditions); err != nil {
+			ctx.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
+		ctx.JSON(http.StatusOK, "OK")
 	}
 }

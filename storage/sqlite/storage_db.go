@@ -12,3 +12,7 @@ func (storage Storage) cardTable() linq.DB[gm.Card] {
 func (storage Storage) logTable() linq.DB[gm.Log] {
 	return linq.NewDB[gm.Log](storage.db)
 }
+
+func (storage Storage) relatedCardsTable() linq.DB[gm.RelatedCards] {
+	return linq.NewDB[gm.RelatedCards](storage.db)
+}

@@ -10,6 +10,7 @@ import (
 	"go.uber.org/zap"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/STRockefeller/langdida-server/internal/review"
 	itime "github.com/STRockefeller/langdida-server/internal/time"
@@ -198,6 +199,87 @@ func (storage Storage) ReviewCard(ctx context.Context, cardIndex protomodels.Car
 			Familiarity: familiarity + 1,
 		})
 	return err
+}
+
+func (storage Storage) GetAssociations(ctx context.Context, cardIndex protomodels.CardIndex) (protomodels.RelatedCards, error) {
+	rep, err := storage.relatedCardsTable().Where(gm.RelatedCards{
+		Name:     cardIndex.Name,
+		Language: cardIndex.Language,
+	}).Take(ctx)
+	if err != nil {
+		return protomodels.RelatedCards{}, err
+	}
+
+	return rep.ToProtoModel(), nil
+}
+
+func (storage Storage) CreateAssociation(ctx context.Context, conditions storage.CreateAssociationConditions) error {
+	cardIndex := protomodels.CardIndex{
+		Name:     conditions.CardIndex.Name,
+		Language: conditions.CardIndex.Language,
+	}
+	card := protomodels.RelatedCards{
+		Index: &cardIndex,
+	}
+
+	relatedCardIndex := protomodels.CardIndex{
+		Name:     conditions.RelatedCardIndex.Name,
+		Language: conditions.RelatedCardIndex.Language,
+	}
+	relatedCard := protomodels.RelatedCards{
+		Index: &relatedCardIndex,
+	}
+
+	switch conditions.Association {
+	case protomodels.AssociationTypes_SYNONYMS:
+		card.Synonyms = append(card.Synonyms, &relatedCardIndex)
+		relatedCard.Synonyms = append(relatedCard.Synonyms, &cardIndex)
+	case protomodels.AssociationTypes_ANTONYMS:
+		card.Antonyms = append(card.Antonyms, &relatedCardIndex)
+		relatedCard.Antonyms = append(relatedCard.Antonyms, &cardIndex)
+	case protomodels.AssociationTypes_ORIGIN:
+		card.Origin = &relatedCardIndex
+		relatedCard.Derivatives = append(relatedCard.Derivatives, &cardIndex)
+	case protomodels.AssociationTypes_DERIVATIVES:
+		card.Derivatives = append(card.Derivatives, &relatedCardIndex)
+		relatedCard.Origin = &cardIndex
+	case protomodels.AssociationTypes_IN_OTHER_LANGUAGES:
+		card.InOtherLanguages = append(card.InOtherLanguages, &relatedCardIndex)
+		relatedCard.InOtherLanguages = append(relatedCard.InOtherLanguages, &cardIndex)
+	case protomodels.AssociationTypes_OTHERS:
+		card.Others = append(card.Others, &relatedCardIndex)
+		relatedCard.Others = append(relatedCard.Others, &cardIndex)
+	}
+
+	if err := storage.relatedCardsTable().Upsert(ctx, clause.OnConflict{
+		UpdateAll: true,
+	}, turnEmptySlicesToNilInRelatedCards(gm.NewRelatedCards(card))); err != nil {
+		return err
+	}
+
+	return storage.relatedCardsTable().Upsert(ctx, clause.OnConflict{
+		UpdateAll: true,
+	}, turnEmptySlicesToNilInRelatedCards(gm.NewRelatedCards(relatedCard)))
+}
+
+func turnEmptySlicesToNilInRelatedCards(rc gm.RelatedCards) gm.RelatedCards {
+	return gm.RelatedCards{
+		Name:             rc.Name,
+		Language:         rc.Language,
+		Synonyms:         turnEmptySlicesToNil(rc.Synonyms),
+		Antonyms:         turnEmptySlicesToNil(rc.Antonyms),
+		Origin:           rc.Origin,
+		Derivatives:      turnEmptySlicesToNil(rc.Derivatives),
+		InOtherLanguages: turnEmptySlicesToNil(rc.InOtherLanguages),
+		Others:           turnEmptySlicesToNil(rc.Others),
+	}
+}
+
+func turnEmptySlicesToNil(as gm.ArrayOfStrings) gm.ArrayOfStrings {
+	if len(as) == 0 {
+		return nil
+	}
+	return as
 }
 
 func (storage Storage) createLog(ctx context.Context, log gm.Log) error {

@@ -38,8 +38,8 @@ func (service CardService) EditCard(ctx context.Context, card protomodels.Card) 
 	return service.storage.UpdateCard(ctx, card)
 }
 
-func (servuce CardService) ListCards(ctx context.Context, conditions storage.ListCardsConditions) ([]protomodels.Card, error) {
-	return servuce.storage.ListCardsWithConditions(ctx, conditions)
+func (service CardService) ListCards(ctx context.Context, conditions storage.ListCardsConditions) ([]protomodels.Card, error) {
+	return service.storage.ListCardsWithConditions(ctx, conditions)
 }
 
 func (service CardService) SearchWithDictionary(ctx context.Context, cardIndex protomodels.CardIndex) ([]string, error) {
@@ -62,4 +62,12 @@ func (service CardService) SearchWithDictionary(ctx context.Context, cardIndex p
 
 func (service CardService) ListIndexes(ctx context.Context) ([]protomodels.CardIndex, error) {
 	return service.storage.ListCardIndexes(ctx)
+}
+
+func (service CardService) GetAssociations(ctx context.Context, cardIndex protomodels.CardIndex) (protomodels.RelatedCards, error) {
+	return service.storage.GetAssociations(ctx, cardIndex)
+}
+
+func (service CardService) CreateAssociations(ctx context.Context, conditions storage.CreateAssociationConditions) error {
+	return service.storage.CreateAssociation(ctx, conditions)
 }

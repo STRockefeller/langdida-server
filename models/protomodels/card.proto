@@ -15,12 +15,13 @@ message Card{
 }
 
 message RelatedCards{
-    repeated CardIndex synonyms           = 1;
-    repeated CardIndex antonyms           = 2;
-    CardIndex          origin             = 3;
-    repeated CardIndex derivatives        = 4;
-    repeated CardIndex in_other_languages = 5;
-    repeated CardIndex others             = 6;
+    CardIndex          index              = 1;
+    repeated CardIndex synonyms           = 2;
+    repeated CardIndex antonyms           = 3;
+    CardIndex          origin             = 4;
+    repeated CardIndex derivatives        = 5;
+    repeated CardIndex in_other_languages = 6;
+    repeated CardIndex others             = 7;
 }
 
 message CardIndex{

@@ -1,6 +1,9 @@
 package gormmodels
 
 import (
+	"encoding/json"
+
+	"github.com/STRockefeller/go-linq"
 	"github.com/STRockefeller/langdida-server/internal/time"
 	"github.com/STRockefeller/langdida-server/models/protomodels"
 )
@@ -41,4 +44,81 @@ func NewCard(c protomodels.Card) Card {
 		Familiarity:      c.Familiarity,
 		ReviewDate:       time.NewFromTimeStamp(c.ReviewDate),
 	}
+}
+
+type RelatedCards struct {
+	/* ---------------------------------- index --------------------------------- */
+	Name     string               `gorm:"primaryKey"`
+	Language protomodels.Language `gorm:"primaryKey"`
+
+	Synonyms         ArrayOfStrings `gorm:"type:text;"`
+	Antonyms         ArrayOfStrings `gorm:"type:text;"`
+	Origin           string
+	Derivatives      ArrayOfStrings `gorm:"type:text;"`
+	InOtherLanguages ArrayOfStrings `gorm:"type:text;"`
+	Others           ArrayOfStrings `gorm:"type:text;"`
+}
+
+func NewRelatedCards(c protomodels.RelatedCards) RelatedCards {
+	return RelatedCards{
+		Name:             c.Index.Name,
+		Language:         c.Index.Language,
+		Synonyms:         parseProtoModelCardIndexes(c.Synonyms),
+		Antonyms:         parseProtoModelCardIndexes(c.Antonyms),
+		Origin:           string(newCardIndex(*c.Origin)),
+		Derivatives:      parseProtoModelCardIndexes(c.Derivatives),
+		InOtherLanguages: parseProtoModelCardIndexes(c.InOtherLanguages),
+		Others:           parseProtoModelCardIndexes(c.Others),
+	}
+}
+
+func (rc RelatedCards) ToProtoModel() protomodels.RelatedCards {
+	origin := cardIndex(rc.Origin).toProtoModel()
+	return protomodels.RelatedCards{
+		Index:            &protomodels.CardIndex{Name: rc.Name, Language: rc.Language},
+		Synonyms:         toProtoModelCardIndexes(rc.Synonyms),
+		Antonyms:         toProtoModelCardIndexes(rc.Antonyms),
+		Origin:           &origin,
+		Derivatives:      toProtoModelCardIndexes(rc.Derivatives),
+		InOtherLanguages: toProtoModelCardIndexes(rc.InOtherLanguages),
+		Others:           toProtoModelCardIndexes(rc.Others),
+	}
+}
+
+type cardIndex string
+
+func (c cardIndex) toProtoModel() protomodels.CardIndex {
+	var cardIndex protomodels.CardIndex
+	err := json.Unmarshal([]byte(c), &cardIndex)
+	if err != nil {
+		panic(err)
+	}
+	return cardIndex
+}
+
+func newCardIndex(c protomodels.CardIndex) cardIndex {
+	bytes, err := json.Marshal(c)
+	if err != nil {
+		panic(err)
+	}
+	return cardIndex(bytes)
+}
+
+func multiCardIndexesToArrayOfString(indexes []cardIndex) ArrayOfStrings {
+	return ArrayOfStrings(linq.Select(indexes, func(index cardIndex) string { return string(index) }))
+}
+
+func parseProtoModelCardIndexes(indexes []*protomodels.CardIndex) ArrayOfStrings {
+	return multiCardIndexesToArrayOfString(linq.Select(indexes, func(i *protomodels.CardIndex) cardIndex {
+		return newCardIndex(*i)
+	}))
+}
+
+func toProtoModelCardIndexes(strings ArrayOfStrings) []*protomodels.CardIndex {
+	indexes := make([]*protomodels.CardIndex, len(strings))
+	for i, str := range strings {
+		ptr := cardIndex(str).toProtoModel()
+		indexes[i] = &ptr
+	}
+	return indexes
 }

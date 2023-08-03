@@ -14,6 +14,10 @@ type Storage interface {
 
 	ListCardsWithConditions(ctx context.Context, conditions ListCardsConditions) ([]protomodels.Card, error)
 
+	GetAssociations(ctx context.Context, cardIndex protomodels.CardIndex) (protomodels.RelatedCards, error)
+
+	CreateAssociation(ctx context.Context, conditions CreateAssociationConditions) error
+
 	// upsert to logs NewCards++
 	CreateCard(ctx context.Context, card protomodels.Card) error
 
@@ -35,4 +39,10 @@ type ListCardsConditions struct {
 	NeedReview bool // true: need to review, false: all
 	Language   *protomodels.Language
 	Label      string
+}
+
+type CreateAssociationConditions struct {
+	CardIndex        protomodels.CardIndex
+	RelatedCardIndex protomodels.CardIndex
+	Association      protomodels.AssociationTypes
 }

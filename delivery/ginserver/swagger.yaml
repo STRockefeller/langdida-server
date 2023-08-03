@@ -15,9 +15,9 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/CardIndex'
+                $ref: "#/components/schemas/CardIndex"
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
@@ -27,12 +27,12 @@ paths:
                   problems:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Problem'
+                      $ref: "#/components/schemas/Problem"
                   answers:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Answer'
-        '400':
+                      $ref: "#/components/schemas/Answer"
+        "400":
           description: Bad request
 
   /exercise/filling:
@@ -45,9 +45,9 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/CardIndex'
+                $ref: "#/components/schemas/CardIndex"
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
@@ -57,12 +57,12 @@ paths:
                   problems:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Problem'
+                      $ref: "#/components/schemas/Problem"
                   answers:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Answer'
-        '400':
+                      $ref: "#/components/schemas/Answer"
+        "400":
           description: Bad request
 
   /card/create:
@@ -73,16 +73,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Card'
+              $ref: "#/components/schemas/Card"
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
                 type: string
                 example: OK
-        '400':
+        "400":
           description: Bad request
 
   /card/edit:
@@ -93,16 +93,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Card'
+              $ref: "#/components/schemas/Card"
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
                 type: string
                 example: OK
-        '400':
+        "400":
           description: Bad request
 
   /card/get:
@@ -122,13 +122,13 @@ paths:
             type: string
           description: Word to search for
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Card'
-        '400':
+                $ref: "#/components/schemas/Card"
+        "400":
           description: Bad request
 
   /card/list:
@@ -154,15 +154,15 @@ paths:
             type: string
           description: specify this field to show the cards which contains the specified label
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Card'
-        '400':
+                  $ref: "#/components/schemas/Card"
+        "400":
           description: Bad request
       x-handler: newListCardsHandler
 
@@ -170,15 +170,15 @@ paths:
     get:
       summary: Get a list of card indexes
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CardIndex'
-        '500':
+                  $ref: "#/components/schemas/CardIndex"
+        "500":
           description: Internal Server Error
 
   /io/import/url:
@@ -192,7 +192,7 @@ paths:
             type: string
           description: The URL of the content to import
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -201,7 +201,7 @@ paths:
                 properties:
                   content:
                     type: string
-        '400':
+        "400":
           description: Bad Request
 
   /card/dictionary/meanings:
@@ -221,7 +221,7 @@ paths:
             type: string
           description: The word to search for
       responses:
-        '200':
+        "200":
           description: Successful response with the list of meanings
           content:
             application/json:
@@ -229,15 +229,57 @@ paths:
                 type: array
                 items:
                   type: string
-        '400':
+        "400":
           description: Bad request
       x-handler: newSearchMeaningsHandler
-
+  /card/association:
+    get:
+      operationId: getAssociations
+      description: Get related cards for a given word.
+      parameters:
+        - name: language
+          in: query
+          description: The language of the word.
+          required: true
+          schema:
+            type: string
+        - name: word
+          in: query
+          description: The word.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                $ref: "#/components/schemas/RelatedCards"
+  /card/association/create:
+    post:
+      summary: Create a card association
+      description: Create a new association between two cards.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAssociationConditions'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
   /ping:
     get:
       summary: Ping the server
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
@@ -286,3 +328,49 @@ components:
       type: array
       items:
         type: string
+
+    RelatedCards:
+      type: object
+      properties:
+        index:
+          $ref: "#/components/schemas/CardIndex"
+        synonyms:
+          type: array
+          items:
+            $ref: "#/components/schemas/CardIndex"
+        antonyms:
+          type: array
+          items:
+            $ref: "#/components/schemas/CardIndex"
+        origin:
+          $ref: "#/components/schemas/CardIndex"
+        derivatives:
+          type: array
+          items:
+            $ref: "#/components/schemas/CardIndex"
+        inOtherLanguages:
+          type: array
+          items:
+            $ref: "#/components/schemas/CardIndex"
+        others:
+          type: array
+          items:
+            $ref: "#/components/schemas/CardIndex"
+    CreateAssociationConditions:
+      type: object
+      properties:
+        CardIndex:
+          $ref: '#/components/schemas/CardIndex'
+        RelatedCardIndex:
+          $ref: '#/components/schemas/CardIndex'
+        Association:
+          $ref: '#/components/schemas/AssociationTypes'
+    AssociationTypes:
+      type: integer
+      enum:
+        - 0  # SYNONYMS
+        - 1  # ANTONYMS
+        - 2  # ORIGIN
+        - 3  # DERIVATIVES
+        - 4  # IN_OTHER_LANGUAGES
+        - 5  # OTHERS

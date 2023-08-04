@@ -25,7 +25,7 @@ func setupCardService(router *gin.Engine, service service.CardService) {
 func newCreateCardHandler(service service.CardService) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		var card protomodels.Card
-		if err := ctx.BindJSON(&card); err != nil {
+		if err := ctx.ShouldBindJSON(&card); err != nil {
 			ctx.AbortWithStatus(http.StatusBadRequest)
 			return
 		}
@@ -127,7 +127,7 @@ func newGetAssociationHandler(service service.CardService) func(*gin.Context) {
 func newCreateAssociationHandler(service service.CardService) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		var conditions storage.CreateAssociationConditions
-		if err := ctx.BindJSON(&conditions); err != nil {
+		if err := ctx.ShouldBindJSON(&conditions); err != nil {
 			ctx.AbortWithStatus(http.StatusBadRequest)
 			return
 		}

@@ -67,12 +67,12 @@ func NewRelatedCards(c protomodels.RelatedCards) RelatedCards {
 	return RelatedCards{
 		Name:             c.Index.Name,
 		Language:         c.Index.Language,
-		Synonyms:         parseProtoModelCardIndexes(c.Synonyms),
-		Antonyms:         parseProtoModelCardIndexes(c.Antonyms),
+		Synonyms:         parseProtoModelCardIndices(c.Synonyms),
+		Antonyms:         parseProtoModelCardIndices(c.Antonyms),
 		Origin:           string(origin),
-		Derivatives:      parseProtoModelCardIndexes(c.Derivatives),
-		InOtherLanguages: parseProtoModelCardIndexes(c.InOtherLanguages),
-		Others:           parseProtoModelCardIndexes(c.Others),
+		Derivatives:      parseProtoModelCardIndices(c.Derivatives),
+		InOtherLanguages: parseProtoModelCardIndices(c.InOtherLanguages),
+		Others:           parseProtoModelCardIndices(c.Others),
 	}
 }
 
@@ -80,12 +80,12 @@ func (rc RelatedCards) ToProtoModel() protomodels.RelatedCards {
 	origin := cardIndex(rc.Origin).toProtoModel()
 	return protomodels.RelatedCards{
 		Index:            &protomodels.CardIndex{Name: rc.Name, Language: rc.Language},
-		Synonyms:         toProtoModelCardIndexes(rc.Synonyms),
-		Antonyms:         toProtoModelCardIndexes(rc.Antonyms),
+		Synonyms:         toProtoModelCardIndices(rc.Synonyms),
+		Antonyms:         toProtoModelCardIndices(rc.Antonyms),
 		Origin:           &origin,
-		Derivatives:      toProtoModelCardIndexes(rc.Derivatives),
-		InOtherLanguages: toProtoModelCardIndexes(rc.InOtherLanguages),
-		Others:           toProtoModelCardIndexes(rc.Others),
+		Derivatives:      toProtoModelCardIndices(rc.Derivatives),
+		InOtherLanguages: toProtoModelCardIndices(rc.InOtherLanguages),
+		Others:           toProtoModelCardIndices(rc.Others),
 	}
 }
 
@@ -108,21 +108,21 @@ func newCardIndex(c protomodels.CardIndex) cardIndex {
 	return cardIndex(bytes)
 }
 
-func multiCardIndexesToArrayOfString(indexes []cardIndex) ArrayOfStrings {
-	return ArrayOfStrings(linq.Select(indexes, func(index cardIndex) string { return string(index) }))
+func multiCardIndicesToArrayOfString(indices []cardIndex) ArrayOfStrings {
+	return ArrayOfStrings(linq.Select(indices, func(index cardIndex) string { return string(index) }))
 }
 
-func parseProtoModelCardIndexes(indexes []*protomodels.CardIndex) ArrayOfStrings {
-	return multiCardIndexesToArrayOfString(linq.Select(indexes, func(i *protomodels.CardIndex) cardIndex {
+func parseProtoModelCardIndices(indices []*protomodels.CardIndex) ArrayOfStrings {
+	return multiCardIndicesToArrayOfString(linq.Select(indices, func(i *protomodels.CardIndex) cardIndex {
 		return newCardIndex(*i)
 	}))
 }
 
-func toProtoModelCardIndexes(strings ArrayOfStrings) []*protomodels.CardIndex {
-	indexes := make([]*protomodels.CardIndex, len(strings))
+func toProtoModelCardIndices(strings ArrayOfStrings) []*protomodels.CardIndex {
+	indices := make([]*protomodels.CardIndex, len(strings))
 	for i, str := range strings {
 		ptr := cardIndex(str).toProtoModel()
-		indexes[i] = &ptr
+		indices[i] = &ptr
 	}
-	return indexes
+	return indices
 }

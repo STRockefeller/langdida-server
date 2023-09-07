@@ -168,7 +168,7 @@ paths:
 
   /cards/index/list:
     get:
-      summary: Get a list of card indexes
+      summary: Get a list of card indices
       responses:
         "200":
           description: OK

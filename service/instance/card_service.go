@@ -60,8 +60,8 @@ func (service CardService) SearchWithDictionary(ctx context.Context, cardIndex p
 	}
 }
 
-func (service CardService) ListIndexes(ctx context.Context) ([]protomodels.CardIndex, error) {
-	return service.storage.ListCardIndexes(ctx)
+func (service CardService) ListIndices(ctx context.Context) ([]protomodels.CardIndex, error) {
+	return service.storage.ListCardIndices(ctx)
 }
 
 func (service CardService) GetAssociations(ctx context.Context, cardIndex protomodels.CardIndex) (protomodels.RelatedCards, error) {

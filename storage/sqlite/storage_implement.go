@@ -59,7 +59,7 @@ func (storage Storage) ListCards(ctx context.Context, cardIndex []protomodels.Ca
 	return convertCardModels(result), nil
 }
 
-func (storage Storage) ListCardIndexes(ctx context.Context) ([]protomodels.CardIndex, error) {
+func (storage Storage) ListCardIndices(ctx context.Context) ([]protomodels.CardIndex, error) {
 	card, err := storage.cardTable().SelectRaw(`name, language`).Find(ctx)
 	if err != nil {
 		return nil, err

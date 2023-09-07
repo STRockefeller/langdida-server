@@ -10,7 +10,7 @@ import (
 type Storage interface {
 	ListCards(ctx context.Context, cardIndex []protomodels.CardIndex) ([]protomodels.Card, error)
 
-	ListCardIndexes(ctx context.Context) ([]protomodels.CardIndex, error)
+	ListCardIndices(ctx context.Context) ([]protomodels.CardIndex, error)
 
 	ListCardsWithConditions(ctx context.Context, conditions ListCardsConditions) ([]protomodels.Card, error)
 

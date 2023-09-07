@@ -60,12 +60,16 @@ type RelatedCards struct {
 }
 
 func NewRelatedCards(c protomodels.RelatedCards) RelatedCards {
+	var origin cardIndex
+	if c.Origin != nil {
+		origin = newCardIndex(*c.Origin)
+	}
 	return RelatedCards{
 		Name:             c.Index.Name,
 		Language:         c.Index.Language,
 		Synonyms:         parseProtoModelCardIndexes(c.Synonyms),
 		Antonyms:         parseProtoModelCardIndexes(c.Antonyms),
-		Origin:           string(newCardIndex(*c.Origin)),
+		Origin:           string(origin),
 		Derivatives:      parseProtoModelCardIndexes(c.Derivatives),
 		InOtherLanguages: parseProtoModelCardIndexes(c.InOtherLanguages),
 		Others:           parseProtoModelCardIndexes(c.Others),

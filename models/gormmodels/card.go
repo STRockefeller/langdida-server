@@ -77,7 +77,10 @@ func NewRelatedCards(c protomodels.RelatedCards) RelatedCards {
 }
 
 func (rc RelatedCards) ToProtoModel() protomodels.RelatedCards {
-	origin := cardIndex(rc.Origin).toProtoModel()
+	origin := *new(protomodels.CardIndex)
+	if rc.Origin != "" {
+		origin = cardIndex(rc.Origin).toProtoModel()
+	}
 	return protomodels.RelatedCards{
 		Index:            &protomodels.CardIndex{Name: rc.Name, Language: rc.Language},
 		Synonyms:         toProtoModelCardIndices(rc.Synonyms),

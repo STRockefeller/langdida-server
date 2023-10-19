@@ -8,8 +8,12 @@ github.com/STRockefeller/dictionaries v0.0.0-20230418055520-d602c50bb54f h1:m2iK
 github.com/STRockefeller/dictionaries v0.0.0-20230418055520-d602c50bb54f/go.mod h1:HRnusviBENu8jEx9VVe9/uEZ3+C9fbaujSiPV4SPzB8=
 github.com/STRockefeller/go-linq v1.0.3 h1:Il40FpOtArnIyXHvVMq74DxxCz8TPnK8dlotxPB6VCg=
 github.com/STRockefeller/go-linq v1.0.3/go.mod h1:GQLV5YGvBKOgQm8j741ejisjpWXWDCieynSSN3yZxPE=
+github.com/STRockefeller/go-linq v1.0.4 h1:TtdAgP7NxUgqWkhA3OutFzu5BFscyX8VtWV/W3ciS7A=
+github.com/STRockefeller/go-linq v1.0.4/go.mod h1:GQLV5YGvBKOgQm8j741ejisjpWXWDCieynSSN3yZxPE=
 github.com/STRockefeller/gorm-linq v0.1.1 h1:XESTOue+QbVs/pbaxGqTNbdVTmQl3LWNkzxa79dXsqY=
 github.com/STRockefeller/gorm-linq v0.1.1/go.mod h1:hdLzg2tNuKx4FfeE/5ehlXeHoqIn25uOTYhWPPZhKu4=
+github.com/STRockefeller/gorm-linq v0.2.0 h1:nzs7n5DU3g0hZyXS/QqEiRkiRbPaichlcyjwrA/WesE=
+github.com/STRockefeller/gorm-linq v0.2.0/go.mod h1:/G2K5zFFrBgwxLgjpeMrMdSMVYvVAUerutKtzlKNWFs=
 github.com/STRockefeller/problems v0.0.0-20230331081955-00ea32642bf8 h1:z0JtdIQ6sOkMSOIHa1Qc4/ehSTpl1OJC4y9UmU0V+pE=
 github.com/STRockefeller/problems v0.0.0-20230331081955-00ea32642bf8/go.mod h1:Qv04ewaRUkgnUDTCx8M1KTSmGJutvqI7fhS00Kg6M9c=
 github.com/STRockefeller/testutils v0.1.0 h1:96TrBRVgYL/lnjiBlVOZX9jYjtnjjQ8KoavW5IvXkkk=

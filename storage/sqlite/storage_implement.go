@@ -49,10 +49,11 @@ func convertCardModels(cards linq.Linq[gm.Card]) []protomodels.Card {
 
 func (storage Storage) ListCards(ctx context.Context, cardIndex []protomodels.CardIndex) ([]protomodels.Card, error) {
 	result, err := storage.cardTable().
-		WhereRaw(`(name, language) IN ?`,
+		WhereRaw(glinq.NewQueryString(`(name, language) IN ?`,
 			linq.
 				Select(cardIndex, func(c protomodels.CardIndex) [2]any { return [2]any{c.Name, c.Language} }).
-				ToSlice()).Find(ctx)
+				ToSlice()),
+		).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +61,7 @@ func (storage Storage) ListCards(ctx context.Context, cardIndex []protomodels.Ca
 }
 
 func (storage Storage) ListCardIndices(ctx context.Context) ([]protomodels.CardIndex, error) {
-	card, err := storage.cardTable().SelectRaw(`name, language`).Find(ctx)
+	card, err := storage.cardTable().SelectRaw([]string{"name", "language"}).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -98,15 +99,15 @@ func listCardsFilters(conditions storage.ListCardsConditions, db glinq.DB[gm.Car
 }
 
 func filterLanguage(language protomodels.Language, db glinq.DB[gm.Card]) glinq.DB[gm.Card] {
-	return db.WhereRaw(`language = ?`, language)
+	return db.WhereRaw(glinq.NewQueryString(`language = ?`, language))
 }
 
 func filterReviewDate(date itime.UnixTime, db glinq.DB[gm.Card]) glinq.DB[gm.Card] {
-	return db.WhereRaw(`review_date < ?`, date)
+	return db.WhereRaw(glinq.NewQueryString(`review_date < ?`, date))
 }
 
 func filterLabel(label string, db glinq.DB[gm.Card]) glinq.DB[gm.Card] {
-	return db.WhereRaw(`labels LIKE ?`, "%"+label+"%")
+	return db.WhereRaw(glinq.NewQueryString(`labels LIKE ?`, "%"+label+"%"))
 }
 
 // upsert to logs NewCards++
@@ -131,7 +132,7 @@ func (storage Storage) CreateCard(ctx context.Context, card protomodels.Card) er
 
 // zero values will NOT been updated
 func (storage Storage) UpdateCard(ctx context.Context, card protomodels.Card) error {
-	_, err := storage.cardTable().WhereRaw(`name = ? AND language = ?`, card.Index.Name, card.Index.Language).Updates(ctx, gm.NewCard(card))
+	_, err := storage.cardTable().WhereRaw(glinq.NewQueryString(`name = ? AND language = ?`, card.Index.Name, card.Index.Language)).Updates(ctx, gm.NewCard(card))
 	return err
 }
 
@@ -154,7 +155,7 @@ func (storage Storage) GetLog(ctx context.Context, date time.Time) (protomodels.
 
 func (storage Storage) ListLogs(ctx context.Context, from time.Time, until time.Time) ([]protomodels.Log, error) {
 	result, err := storage.logTable().
-		WhereRaw(`date >= ? AND date <= ?`, dayFormat(from), dayFormat(until)).
+		WhereRaw(glinq.NewQueryString(`date >= ? AND date <= ?`, dayFormat(from), dayFormat(until))).
 		Find(ctx)
 	if err != nil {
 		return nil, err

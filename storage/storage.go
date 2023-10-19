@@ -8,7 +8,8 @@ import (
 )
 
 type Storage interface {
-	ListCards(ctx context.Context, cardIndex []protomodels.CardIndex) ([]protomodels.Card, error)
+	// todo : refactor with builder pattern
+	ListCards(ctx context.Context, cardIndices []protomodels.CardIndex) ([]protomodels.Card, error)
 
 	ListCardIndices(ctx context.Context) ([]protomodels.CardIndex, error)
 

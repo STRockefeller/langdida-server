@@ -1,4 +1,6 @@
 bou.ke/monkey v1.0.2 h1:kWcnsrCNUatbxncxR/ThdYqbytgOIArtYWqcQLQzKLI=
+github.com/DATA-DOG/go-sqlmock v1.5.0 h1:Shsta01QNfFxHCfpW6YH2STWB0MudeXXEWMr20OEh60=
+github.com/DATA-DOG/go-sqlmock v1.5.0/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
 github.com/PuerkitoBio/goquery v1.8.1 h1:uQxhNlArOIdbrH1tr0UXwdVFgDcZDrZVdcpygAcwmWM=
 github.com/PuerkitoBio/goquery v1.8.1/go.mod h1:Q8ICL1kNUJ2sXGoAhPGUdYDJvgQgHzJsnnd3H7Ho5jQ=
 github.com/STRockefeller/article-crawler v1.0.1 h1:KFAou3OvsBD2lHXXRwK9pl8t+kV4qAWhD7oxjxIO+30=
@@ -10,10 +12,14 @@ github.com/STRockefeller/go-linq v1.0.3 h1:Il40FpOtArnIyXHvVMq74DxxCz8TPnK8dlotx
 github.com/STRockefeller/go-linq v1.0.3/go.mod h1:GQLV5YGvBKOgQm8j741ejisjpWXWDCieynSSN3yZxPE=
 github.com/STRockefeller/go-linq v1.0.4 h1:TtdAgP7NxUgqWkhA3OutFzu5BFscyX8VtWV/W3ciS7A=
 github.com/STRockefeller/go-linq v1.0.4/go.mod h1:GQLV5YGvBKOgQm8j741ejisjpWXWDCieynSSN3yZxPE=
+github.com/STRockefeller/go-linq v1.2.0 h1:M/6ee0X9H7/MQ9GgBSpxi5FvFad/qSnc4fVq7KPPocs=
+github.com/STRockefeller/go-linq v1.2.0/go.mod h1:GQLV5YGvBKOgQm8j741ejisjpWXWDCieynSSN3yZxPE=
 github.com/STRockefeller/gorm-linq v0.1.1 h1:XESTOue+QbVs/pbaxGqTNbdVTmQl3LWNkzxa79dXsqY=
 github.com/STRockefeller/gorm-linq v0.1.1/go.mod h1:hdLzg2tNuKx4FfeE/5ehlXeHoqIn25uOTYhWPPZhKu4=
 github.com/STRockefeller/gorm-linq v0.2.0 h1:nzs7n5DU3g0hZyXS/QqEiRkiRbPaichlcyjwrA/WesE=
 github.com/STRockefeller/gorm-linq v0.2.0/go.mod h1:/G2K5zFFrBgwxLgjpeMrMdSMVYvVAUerutKtzlKNWFs=
+github.com/STRockefeller/gorm-linq v1.0.0 h1:7Ld126ISH7cZfqXuyVO1EhQCAgcWgQoU2UXriNiomhg=
+github.com/STRockefeller/gorm-linq v1.0.0/go.mod h1:96cFVGdDpYaVHYKFt3QY5cSb5RDGFM/m68mzfCWxMgU=
 github.com/STRockefeller/problems v0.0.0-20230331081955-00ea32642bf8 h1:z0JtdIQ6sOkMSOIHa1Qc4/ehSTpl1OJC4y9UmU0V+pE=
 github.com/STRockefeller/problems v0.0.0-20230331081955-00ea32642bf8/go.mod h1:Qv04ewaRUkgnUDTCx8M1KTSmGJutvqI7fhS00Kg6M9c=
 github.com/STRockefeller/testutils v0.1.0 h1:96TrBRVgYL/lnjiBlVOZX9jYjtnjjQ8KoavW5IvXkkk=
@@ -50,6 +56,8 @@ github.com/go-playground/universal-translator v0.18.1/go.mod h1:xekY+UJKNuX9WP91
 github.com/go-playground/validator/v10 v10.10.0/go.mod h1:74x4gJWsvQexRdW8Pn3dXSGrTK4nAUsbPlLADvpJkos=
 github.com/go-playground/validator/v10 v10.11.2 h1:q3SHpufmypg+erIExEKUmsgmhDTyhcJ38oeKGACXohU=
 github.com/go-playground/validator/v10 v10.11.2/go.mod h1:NieE624vt4SCTJtD87arVLvdmjPAeV8BQlHtMnw9D7s=
+github.com/go-sql-driver/mysql v1.7.0 h1:ueSltNNllEqE3qcWBTD0iQd3IpL/6U+mJxLkazJ7YPc=
+github.com/go-sql-driver/mysql v1.7.0/go.mod h1:OXbVy3sEdcQ2Doequ6Z5BW6fXNQTmx+9S1MCJN5yJMI=
 github.com/goccy/go-json v0.9.7/go.mod h1:6MelG93GURQebXPDq3khkgXZkazVtN9CRI+MGFi0w8I=
 github.com/goccy/go-json v0.10.1 h1:lEs5Ob+oOG/Ze199njvzHbhn6p9T+h64F5hRj69iTTo=
 github.com/goccy/go-json v0.10.1/go.mod h1:6MelG93GURQebXPDq3khkgXZkazVtN9CRI+MGFi0w8I=
@@ -191,9 +199,13 @@ gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C
 gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
+gorm.io/driver/mysql v1.5.2 h1:QC2HRskSE75wBuOxe0+iCkyJZ+RqpudsQtqkp+IMuXs=
+gorm.io/driver/mysql v1.5.2/go.mod h1:pQLhh1Ut/WUAySdTHwBpBv6+JKcj+ua4ZFx1QQTBzb8=
 gorm.io/driver/sqlite v1.4.4 h1:gIufGoR0dQzjkyqDyYSCvsYR6fba1Gw5YKDqKeChxFc=
 gorm.io/driver/sqlite v1.4.4/go.mod h1:0Aq3iPO+v9ZKbcdiz8gLWRw5VOPcBOPUQJFLq5e2ecI=
 gorm.io/gorm v1.24.0/go.mod h1:DVrVomtaYTbqs7gB/x2uVvqnXzv0nqjB396B8cG4dBA=
 gorm.io/gorm v1.25.1 h1:nsSALe5Pr+cM3V1qwwQ7rOkw+6UeLrX5O4v3llhHa64=
 gorm.io/gorm v1.25.1/go.mod h1:L4uxeKpfBml98NYqVqwAdmV1a2nBtAec/cf3fpucW/k=
+gorm.io/gorm v1.25.2-0.20230530020048-26663ab9bf55 h1:sC1Xj4TYrLqg1n3AN10w871An7wJM0gzgcm8jkIkECQ=
+gorm.io/gorm v1.25.2-0.20230530020048-26663ab9bf55/go.mod h1:L4uxeKpfBml98NYqVqwAdmV1a2nBtAec/cf3fpucW/k=
 rsc.io/pdf v0.1.1/go.mod h1:n8OzWcQ6Sp37PL01nO98y4iUCRdTGarVfzxY20ICaU4=

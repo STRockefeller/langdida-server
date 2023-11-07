@@ -15,12 +15,16 @@ type CardService struct {
 	storage storage.Storage
 }
 
+func (service CardService) ListCards(ctx context.Context, req storage.ListCardsRequest) ([]protomodels.Card, error) {
+	return service.storage.ListCards(ctx, req)
+}
+
 func NewCardService(storage storage.Storage) service.CardService {
 	return &CardService{storage: storage}
 }
 
 func (service CardService) GetCard(ctx context.Context, condition protomodels.CardIndex) (protomodels.Card, error) {
-	rep, err := service.storage.ListCards(ctx, []protomodels.CardIndex{condition})
+	rep, err := service.storage.ListCards(ctx, storage.NewListCardRequest().WhereCardIndexIn([]protomodels.CardIndex{condition}))
 	if err != nil {
 		return protomodels.Card{}, err
 	}
@@ -36,10 +40,6 @@ func (service CardService) CreateCard(ctx context.Context, card protomodels.Card
 
 func (service CardService) EditCard(ctx context.Context, card protomodels.Card) error {
 	return service.storage.UpdateCard(ctx, card)
-}
-
-func (service CardService) ListCards(ctx context.Context, conditions storage.ListCardsConditions) ([]protomodels.Card, error) {
-	return service.storage.ListCardsWithConditions(ctx, conditions)
 }
 
 func (service CardService) SearchWithDictionary(ctx context.Context, cardIndex protomodels.CardIndex) ([]string, error) {

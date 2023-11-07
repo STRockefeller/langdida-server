@@ -12,7 +12,7 @@ type CardService interface {
 	CreateCard(ctx context.Context, card protomodels.Card) error
 	// renew the review date
 	EditCard(ctx context.Context, card protomodels.Card) error
-	ListCards(ctx context.Context, conditions storage.ListCardsConditions) ([]protomodels.Card, error)
+	ListCards(ctx context.Context, req storage.ListCardsRequest) ([]protomodels.Card, error)
 	ListIndices(ctx context.Context) ([]protomodels.CardIndex, error)
 	GetAssociations(ctx context.Context, cardIndex protomodels.CardIndex) (protomodels.RelatedCards, error)
 	CreateAssociations(ctx context.Context, conditions storage.CreateAssociationConditions) error

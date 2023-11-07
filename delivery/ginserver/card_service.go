@@ -2,10 +2,11 @@ package ginserver
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/samber/lo"
 
+	itime "github.com/STRockefeller/langdida-server/internal/time"
 	"github.com/STRockefeller/langdida-server/models/protomodels"
 	"github.com/STRockefeller/langdida-server/service"
 	"github.com/STRockefeller/langdida-server/storage"
@@ -86,11 +87,18 @@ func newListCardsHandler(service service.CardService) func(*gin.Context) {
 
 		mappedLanguage := protomodels.LangMapping(language)
 
-		cards, err := service.ListCards(ctx, storage.ListCardsConditions{
-			NeedReview: lo.Ternary(needReview == "true", true, false),
-			Language:   lo.Ternary(language != "", &mappedLanguage, nil),
-			Label:      lo.Ternary(label != "", label, ""),
-		})
+		req := storage.NewListCardRequest()
+		if needReview == "true" {
+			req.WhereNeedReview(itime.NewFromTime(time.Now()))
+		}
+		if language != "" {
+			req.WhereLanguage(mappedLanguage)
+		}
+		if label != "" {
+			req.WhereLabelContains(label)
+		}
+
+		cards, err := service.ListCards(ctx, req)
 
 		if err != nil {
 			ctx.AbortWithStatus(http.StatusBadRequest)

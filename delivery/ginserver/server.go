@@ -21,7 +21,9 @@ func Run(port int, storage storage.Storage) {
 	setupIOService(router, instance.NewIOService())
 	router.GET("/ping", pingHandler)
 
-	router.Run(":" + strconv.Itoa(port))
+	if err := router.Run(":" + strconv.Itoa(port)); err != nil {
+		zap.L().Fatal(err.Error())
+	}
 	zap.L().Info("server started", zap.Int("port", port))
 }
 

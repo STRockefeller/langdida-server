@@ -112,13 +112,13 @@ func newCardIndex(c protomodels.CardIndex) cardIndex {
 }
 
 func multiCardIndicesToArrayOfString(indices []cardIndex) ArrayOfStrings {
-	return ArrayOfStrings(linq.Select(indices, func(index cardIndex) string { return string(index) }))
+	return ArrayOfStrings(linq.Select(indices, func(index cardIndex) string { return string(index) }).ToSlice())
 }
 
 func parseProtoModelCardIndices(indices []*protomodels.CardIndex) ArrayOfStrings {
 	return multiCardIndicesToArrayOfString(linq.Select(indices, func(i *protomodels.CardIndex) cardIndex {
 		return newCardIndex(*i)
-	}))
+	}).ToSlice())
 }
 
 func toProtoModelCardIndices(strings ArrayOfStrings) []*protomodels.CardIndex {

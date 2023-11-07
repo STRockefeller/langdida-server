@@ -42,18 +42,14 @@ type Storage struct {
 }
 
 func convertCardModels(cards linq.Linq[gm.Card]) []protomodels.Card {
-	return linq.Select(cards, func(c gm.Card) protomodels.Card {
+	return linq.Select(cards.ToSlice(), func(c gm.Card) protomodels.Card {
 		return c.ToProtoModel()
-	})
+	}).ToSlice()
 }
 
-func (storage Storage) ListCards(ctx context.Context, cardIndex []protomodels.CardIndex) ([]protomodels.Card, error) {
+func (storage Storage) ListCards(ctx context.Context, req storage.ListCardsRequest) ([]protomodels.Card, error) {
 	result, err := storage.cardTable().
-		WhereRaw(glinq.NewQueryString(`(name, language) IN ?`,
-			linq.
-				Select(cardIndex, func(c protomodels.CardIndex) [2]any { return [2]any{c.Name, c.Language} }).
-				ToSlice()),
-		).Find(ctx)
+		WhereByRequest(req).Find(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -65,49 +61,12 @@ func (storage Storage) ListCardIndices(ctx context.Context) ([]protomodels.CardI
 	if err != nil {
 		return nil, err
 	}
-	return linq.Select(card, func(c gm.Card) protomodels.CardIndex {
+	return linq.Select(card.ToSlice(), func(c gm.Card) protomodels.CardIndex {
 		return protomodels.CardIndex{
 			Name:     c.Name,
 			Language: c.Language,
 		}
-	}), nil
-}
-
-// arguments details:
-//  - needReview: true => need to review, false => all
-func (storage Storage) ListCardsWithConditions(ctx context.Context, conditions storage.ListCardsConditions) ([]protomodels.Card, error) {
-	result, err := listCardsFilters(conditions, storage.cardTable()).Find(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return convertCardModels(result), nil
-}
-
-func listCardsFilters(conditions storage.ListCardsConditions, db glinq.DB[gm.Card]) glinq.DB[gm.Card] {
-	if conditions.NeedReview {
-		date := itime.NewFromTime(time.Now())
-		db = filterReviewDate(date, db)
-	}
-	if conditions.Label != "" {
-		db = filterLabel(conditions.Label, db)
-	}
-	if conditions.Language != nil {
-		db = filterLanguage(*conditions.Language, db)
-	}
-	return db
-}
-
-func filterLanguage(language protomodels.Language, db glinq.DB[gm.Card]) glinq.DB[gm.Card] {
-	return db.WhereRaw(glinq.NewQueryString(`language = ?`, language))
-}
-
-func filterReviewDate(date itime.UnixTime, db glinq.DB[gm.Card]) glinq.DB[gm.Card] {
-	return db.WhereRaw(glinq.NewQueryString(`review_date < ?`, date))
-}
-
-func filterLabel(label string, db glinq.DB[gm.Card]) glinq.DB[gm.Card] {
-	return db.WhereRaw(glinq.NewQueryString(`labels LIKE ?`, "%"+label+"%"))
+	}).ToSlice(), nil
 }
 
 // upsert to logs NewCards++
@@ -160,7 +119,7 @@ func (storage Storage) ListLogs(ctx context.Context, from time.Time, until time.
 	if err != nil {
 		return nil, err
 	}
-	return linq.Select(result, func(l gm.Log) protomodels.Log { return l.ToProtoModel() }).ToSlice(), nil
+	return linq.Select(result.ToSlice(), func(l gm.Log) protomodels.Log { return l.ToProtoModel() }).ToSlice(), nil
 }
 
 // upsert to logs ReviewedCards++
@@ -252,15 +211,15 @@ func (storage Storage) CreateAssociation(ctx context.Context, conditions storage
 		relatedCard.Others = append(relatedCard.Others, &cardIndex)
 	}
 
-	if err := storage.relatedCardsTable().Upsert(ctx, clause.OnConflict{
-		UpdateAll: true,
-	}, turnEmptySlicesToNilInRelatedCards(gm.NewRelatedCards(card))); err != nil {
+	if err := storage.relatedCardsTable().
+		Clauses(clause.OnConflict{UpdateAll: true}).
+		Create(ctx, turnEmptySlicesToNilInRelatedCards(gm.NewRelatedCards(card))); err != nil {
 		return err
 	}
 
-	return storage.relatedCardsTable().Upsert(ctx, clause.OnConflict{
-		UpdateAll: true,
-	}, turnEmptySlicesToNilInRelatedCards(gm.NewRelatedCards(relatedCard)))
+	return storage.relatedCardsTable().
+		Clauses(clause.OnConflict{UpdateAll: true}).
+		Create(ctx, turnEmptySlicesToNilInRelatedCards(gm.NewRelatedCards(relatedCard)))
 }
 
 func turnEmptySlicesToNilInRelatedCards(rc gm.RelatedCards) gm.RelatedCards {

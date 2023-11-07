@@ -9,11 +9,9 @@ import (
 
 type Storage interface {
 	// todo : refactor with builder pattern
-	ListCards(ctx context.Context, cardIndices []protomodels.CardIndex) ([]protomodels.Card, error)
+	ListCards(ctx context.Context, req ListCardsRequest) ([]protomodels.Card, error)
 
 	ListCardIndices(ctx context.Context) ([]protomodels.CardIndex, error)
-
-	ListCardsWithConditions(ctx context.Context, conditions ListCardsConditions) ([]protomodels.Card, error)
 
 	GetAssociations(ctx context.Context, cardIndex protomodels.CardIndex) (protomodels.RelatedCards, error)
 
@@ -34,12 +32,6 @@ type Storage interface {
 	// upsert to logs ReviewedCards++
 	// update card review date
 	ReviewCard(ctx context.Context, cardIndex protomodels.CardIndex) error
-}
-
-type ListCardsConditions struct {
-	NeedReview bool // true: need to review, false: all
-	Language   *protomodels.Language
-	Label      string
 }
 
 type CreateAssociationConditions struct {

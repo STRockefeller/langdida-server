@@ -17,7 +17,7 @@ func (l *Language) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	v := Language(Language_value[tmp])
-	l = &v
+	*l = v
 	return nil
 }
 

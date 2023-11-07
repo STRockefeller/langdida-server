@@ -19,17 +19,17 @@ func NewExerciseService(storage storage.Storage) *ExerciseService {
 }
 
 func (e ExerciseService) CreateChoiceProblems(ctx context.Context, cards []protomodels.CardIndex) (problems []string, answers []string, err error) {
-	fullCards, err := e.storage.ListCards(ctx, cards)
+	fullCards, err := e.storage.ListCards(ctx, storage.NewListCardRequest().WhereCardIndexIn(cards))
 	if err != nil {
 		return nil, nil, err
 	}
-	muiltiChoiceProblems := problemGenerator.GenerateMultiChoiceProblems(linq.Select(linq.NewLinq(fullCards), func(card protomodels.Card) problemGenerator.FlashCard {
+	muiltiChoiceProblems := problemGenerator.GenerateMultiChoiceProblems(linq.Select(fullCards, func(card protomodels.Card) problemGenerator.FlashCard {
 		return problemGenerator.FlashCard{
 			Word:        card.Index.Name,
 			Sentences:   card.ExampleSentences,
 			Definitions: card.Explanations,
 		}
-	}))
+	}).ToSlice())
 
 	for _, problem := range muiltiChoiceProblems {
 		question := problem.Question + "\n"
@@ -43,17 +43,17 @@ func (e ExerciseService) CreateChoiceProblems(ctx context.Context, cards []proto
 }
 
 func (e ExerciseService) CreateFillingProblems(ctx context.Context, cards []protomodels.CardIndex) (problems []string, answers []string, err error) {
-	fullCards, err := e.storage.ListCards(ctx, cards)
+	fullCards, err := e.storage.ListCards(ctx, storage.NewListCardRequest().WhereCardIndexIn(cards))
 	if err != nil {
 		return nil, nil, err
 	}
-	fprob := problemGenerator.GenerateFillInTheBlankProblems(linq.Select(linq.NewLinq(fullCards), func(card protomodels.Card) problemGenerator.FlashCard {
+	fprob := problemGenerator.GenerateFillInTheBlankProblems(linq.Select(fullCards, func(card protomodels.Card) problemGenerator.FlashCard {
 		return problemGenerator.FlashCard{
 			Word:        card.Index.Name,
 			Sentences:   card.ExampleSentences,
 			Definitions: card.Explanations,
 		}
-	}))
+	}).ToSlice())
 	for _, problem := range fprob {
 		problems = append(problems, problem.Question)
 		answers = append(answers, problem.Answer)

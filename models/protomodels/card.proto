@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package protomodels;
+
+import "google/protobuf/timestamp.proto";
+
+message Card{
+    CardIndex                 index             = 1;
+    repeated string           labels            = 2;
+    repeated string           explanations      = 3;
+    repeated string           example_sentences = 4;
+    // where 0 means not familiar at all, 10 means very familiar
+    int32                     familiarity       = 5;
+    google.protobuf.Timestamp review_date       = 6;
+}
+
+message RelatedCards{
+    CardIndex          index              = 1;
+    repeated CardIndex synonyms           = 2;
+    repeated CardIndex antonyms           = 3;
+    CardIndex          origin             = 4;
+    repeated CardIndex derivatives        = 5;
+    repeated CardIndex in_other_languages = 6;
+    repeated CardIndex others             = 7;
+}
+
+message CardIndex{
+    string   name     = 1;
+    Language language = 2;
+}
+
+enum Language{
+    ENGLISH  = 0;
+    JAPANESE = 1;
+    FRENCH   = 2;
+}
+
+enum AssociationTypes{
+    SYNONYMS           = 0;
+    ANTONYMS           = 1;
+    ORIGIN             = 2;
+    DERIVATIVES        = 3;
+    IN_OTHER_LANGUAGES = 4;
+    OTHERS             = 5;
+}

@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package protomodels;
+
+message Log{
+    string                    date           = 1;
+    int32                     review_cards   = 2;
+    int32                     new_cards      = 3;
+    int32                     streak         = 4;
+}

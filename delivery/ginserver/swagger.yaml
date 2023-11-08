@@ -1,0 +1,376 @@
+openapi: 3.0.0
+info:
+  title: Langdida Server API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /exercise/choice:
+    post:
+      summary: Create choice problems
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/CardIndex"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  problems:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Problem"
+                  answers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Answer"
+        "400":
+          description: Bad request
+
+  /exercise/filling:
+    post:
+      summary: Create filling problems
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/CardIndex"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  problems:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Problem"
+                  answers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Answer"
+        "400":
+          description: Bad request
+
+  /card/create:
+    post:
+      summary: Create a new card
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Card"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: string
+                example: OK
+        "400":
+          description: Bad request
+
+  /card/edit:
+    put:
+      summary: Edit an existing card
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Card"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: string
+                example: OK
+        "400":
+          description: Bad request
+
+  /card/get:
+    get:
+      summary: Get a card by language and word
+      parameters:
+        - name: language
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Language code (e.g., en, jp, fr)
+        - name: word
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Word to search for
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Card"
+        "400":
+          description: Bad request
+
+  /card/list:
+    get:
+      summary: list cards according to the specified conditions
+      parameters:
+        - in: query
+          name: language
+          required: false
+          schema:
+            type: string
+          description: The language of the word
+        - in: query
+          name: needReview
+          required: false
+          schema:
+            type: string
+          description: specify this field to show the SRS ones only
+        - in: query
+          name: label
+          required: false
+          schema:
+            type: string
+          description: specify this field to show the cards which contains the specified label
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Card"
+        "400":
+          description: Bad request
+      x-handler: newListCardsHandler
+
+  /cards/index/list:
+    get:
+      summary: Get a list of card indices
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CardIndex"
+        "500":
+          description: Internal Server Error
+
+  /io/import/url:
+    get:
+      summary: Import content from URL
+      parameters:
+        - in: query
+          name: url
+          required: true
+          schema:
+            type: string
+          description: The URL of the content to import
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: string
+        "400":
+          description: Bad Request
+
+  /card/dictionary/meanings:
+    get:
+      summary: Search meanings in the card dictionary
+      parameters:
+        - in: query
+          name: language
+          required: true
+          schema:
+            type: string
+          description: The language of the word
+        - in: query
+          name: word
+          required: true
+          schema:
+            type: string
+          description: The word to search for
+      responses:
+        "200":
+          description: Successful response with the list of meanings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        "400":
+          description: Bad request
+      x-handler: newSearchMeaningsHandler
+  /card/association:
+    get:
+      operationId: getAssociations
+      description: Get related cards for a given word.
+      parameters:
+        - name: language
+          in: query
+          description: The language of the word.
+          required: true
+          schema:
+            type: string
+        - name: word
+          in: query
+          description: The word.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                $ref: "#/components/schemas/RelatedCards"
+  /card/association/create:
+    post:
+      summary: Create a card association
+      description: Create a new association between two cards.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAssociationConditions'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /ping:
+    get:
+      summary: Ping the server
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Pong
+
+components:
+  schemas:
+    Card:
+      type: "object"
+      properties:
+        index:
+          $ref: "#/components/schemas/CardIndex"
+        labels:
+          type: "array"
+          items:
+            type: "string"
+        explanations:
+          type: "array"
+          items:
+            type: "string"
+        example_sentences:
+          type: "array"
+          items:
+            type: "string"
+        familiarity:
+          type: "integer"
+          format: "int32"
+        review_date:
+          type: "string"
+    CardIndex:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        language:
+          type: "string"
+
+    Problem:
+      type: array
+      items:
+        type: string
+
+    Answer:
+      type: array
+      items:
+        type: string
+
+    RelatedCards:
+      type: object
+      properties:
+        index:
+          $ref: "#/components/schemas/CardIndex"
+        synonyms:
+          type: array
+          items:
+            $ref: "#/components/schemas/CardIndex"
+        antonyms:
+          type: array
+          items:
+            $ref: "#/components/schemas/CardIndex"
+        origin:
+          $ref: "#/components/schemas/CardIndex"
+        derivatives:
+          type: array
+          items:
+            $ref: "#/components/schemas/CardIndex"
+        inOtherLanguages:
+          type: array
+          items:
+            $ref: "#/components/schemas/CardIndex"
+        others:
+          type: array
+          items:
+            $ref: "#/components/schemas/CardIndex"
+    CreateAssociationConditions:
+      type: object
+      properties:
+        CardIndex:
+          $ref: '#/components/schemas/CardIndex'
+        RelatedCardIndex:
+          $ref: '#/components/schemas/CardIndex'
+        Association:
+          $ref: '#/components/schemas/AssociationTypes'
+    AssociationTypes:
+      type: integer
+      enum:
+        - 0  # SYNONYMS
+        - 1  # ANTONYMS
+        - 2  # ORIGIN
+        - 3  # DERIVATIVES
+        - 4  # IN_OTHER_LANGUAGES
+        - 5  # OTHERS

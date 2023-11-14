@@ -21,7 +21,7 @@ Before getting started, ensure that you have the following prerequisites install
 ### Setting up the database
 
 1. Create a new PostgreSQL database for langdida-server.
-2. Update the database connection settings in the  `config.yml`  file.
+2. Update the database connection settings in the  `configs.yml`  file.
 
 ### Running the server
 
@@ -29,9 +29,16 @@ Before getting started, ensure that you have the following prerequisites install
 2. Run  `go mod download`  to install the dependencies.
 3. Run  `go run main.go`  to start the server.
 
+Usage of the program:
+
+```console
+  -configs string
+        specify the config file, refer to configs.md (default "./assets/configs.yaml")
+```
+
 ## API Documentation
 
-The server exposes a RESTful API for communication with the langdida-ui. The API endpoints and their respective functionalities are documented in the [API Documentation](api-docs.md) file.
+The server exposes a RESTful API for communication with the langdida-ui. The API endpoints and their respective functionalities are documented in the [API Documentation](delivery\ginserver\swagger.yaml) file.
 
 ## Contribution
 

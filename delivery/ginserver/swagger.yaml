@@ -166,7 +166,7 @@ paths:
           description: Bad request
       x-handler: newListCardsHandler
 
-  /cards/index/list:
+  /card/index/list:
     get:
       summary: Get a list of card indices
       responses:
@@ -284,8 +284,13 @@ paths:
           content:
             application/json:
               schema:
-                type: string
-                example: Pong
+                type: object
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: pong
 
 components:
   schemas:

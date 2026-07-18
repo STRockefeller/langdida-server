@@ -20,7 +20,7 @@ type Storage interface {
 	// upsert to logs NewCards++
 	CreateCard(ctx context.Context, card protomodels.Card) error
 
-	// zero values will NOT been updated
+	// All editable fields are replaced, including empty slices and zero values.
 	UpdateCard(ctx context.Context, card protomodels.Card) error
 
 	DeleteCard(ctx context.Context, cardIndex protomodels.CardIndex) error

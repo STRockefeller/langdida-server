@@ -90,10 +90,25 @@ func (storage Storage) CreateCard(ctx context.Context, card protomodels.Card) er
 	return storage.cardTable().Create(ctx, gm.NewCard(card))
 }
 
-// zero values will NOT been updated
 func (storage Storage) UpdateCard(ctx context.Context, card protomodels.Card) error {
-	_, err := storage.cardTable().WhereRaw(glinq.NewQueryString(`name = ? AND language = ?`, card.Index.Name, card.Index.Language)).Updates(ctx, gm.NewCard(card))
-	return err
+	model := gm.NewCard(card)
+	result := storage.db.WithContext(ctx).
+		Model(&gm.Card{}).
+		Where("name = ? AND language = ?", card.Index.Name, card.Index.Language).
+		Updates(map[string]interface{}{
+			"labels":            model.Labels,
+			"explanations":      model.Explanations,
+			"example_sentences": model.ExampleSentences,
+			"familiarity":       model.Familiarity,
+			"review_date":       model.ReviewDate,
+		})
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	return nil
 }
 
 func (storage Storage) DeleteCard(ctx context.Context, cardIndex protomodels.CardIndex) error {

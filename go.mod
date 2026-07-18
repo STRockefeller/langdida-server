@@ -5,7 +5,7 @@ go 1.22.1
 toolchain go1.22.3
 
 require (
-	github.com/STRockefeller/article-crawler v1.0.1
+	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/STRockefeller/dictionaries v0.0.0-20230418055520-d602c50bb54f
 	github.com/STRockefeller/problems v0.0.0-20230331081955-00ea32642bf8
 	github.com/gin-gonic/gin v1.9.0
@@ -16,7 +16,6 @@ require (
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
-	github.com/PuerkitoBio/goquery v1.8.1 // indirect
 	github.com/STRockefeller/collection v1.0.0 // indirect
 	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect

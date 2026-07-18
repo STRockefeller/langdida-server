@@ -40,6 +40,8 @@ Usage of the program:
 
 The server exposes a RESTful API for communication with the langdida-ui. The API endpoints and their respective functionalities are documented in the [API Documentation](delivery\ginserver\swagger.yaml) file.
 
+The server has no authentication and therefore listens on `127.0.0.1` only. Browser access is limited to HTTP(S) origins on localhost or loopback IP addresses. Do not expose it through a reverse proxy or port forward; a non-loopback deployment requires authentication, an explicit CORS allowlist, request limits, and rate limiting first.
+
 ## Contribution
 
 If you would like to contribute to this project, please follow these steps:

@@ -353,7 +353,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/CardIndex"
-        inOtherLanguages:
+        in_other_languages:
           type: array
           items:
             $ref: "#/components/schemas/CardIndex"

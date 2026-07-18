@@ -1,0 +1,9 @@
+{
+  "index": {"name": "color", "language": "ENGLISH"},
+  "synonyms": [{"name": "hue", "language": "ENGLISH"}],
+  "antonyms": [{"name": "absence", "language": "ENGLISH"}],
+  "origin": {"name": "", "language": "ENGLISH"},
+  "derivatives": [{"name": "colorful", "language": "ENGLISH"}],
+  "in_other_languages": [{"name": "couleur", "language": "JAPANESE"}],
+  "others": [{"name": "palette", "language": "ENGLISH"}]
+}

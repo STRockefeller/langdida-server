@@ -32,3 +32,17 @@ func TestPingContract(t *testing.T) {
 		t.Fatalf("expected pong message, got %q", body.Message)
 	}
 }
+
+func TestLocalCORSConfig(t *testing.T) {
+	config := localCORSConfig()
+	for _, origin := range []string{"http://localhost:8080", "http://127.0.0.1:3000", "https://[::1]:8443"} {
+		if !config.AllowOriginFunc(origin) {
+			t.Errorf("expected local origin %q to be allowed", origin)
+		}
+	}
+	for _, origin := range []string{"https://example.com", "https://192.168.1.10", "file:///tmp/index.html", "not a URL"} {
+		if config.AllowOriginFunc(origin) {
+			t.Errorf("expected non-local origin %q to be rejected", origin)
+		}
+	}
+}

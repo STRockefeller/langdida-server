@@ -2,6 +2,7 @@ package sqlite
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -27,7 +28,7 @@ func NewStorage(dbPath string, migrateTables bool) *Storage {
 	zap.L().Info("successfully opened sqlite db", zap.String("path", dbPath))
 
 	if migrateTables {
-		if err := db.AutoMigrate(&gm.Card{}, &gm.Log{}); err != nil {
+		if err := db.AutoMigrate(&gm.Card{}, &gm.RelatedCards{}, &gm.Log{}); err != nil {
 			panic(err)
 		}
 		zap.L().Info(`auto-migrate tables completed`)
@@ -174,52 +175,83 @@ func (storage Storage) GetAssociations(ctx context.Context, cardIndex protomodel
 }
 
 func (storage Storage) CreateAssociation(ctx context.Context, conditions storage.CreateAssociationConditions) error {
-	cardIndex := protomodels.CardIndex{
-		Name:     conditions.CardIndex.Name,
-		Language: conditions.CardIndex.Language,
-	}
-	card := protomodels.RelatedCards{
-		Index: &cardIndex,
+	if conditions.CardIndex.Name == conditions.RelatedCardIndex.Name &&
+		conditions.CardIndex.Language == conditions.RelatedCardIndex.Language {
+		return errors.New("a card cannot be associated with itself")
 	}
 
-	relatedCardIndex := protomodels.CardIndex{
-		Name:     conditions.RelatedCardIndex.Name,
-		Language: conditions.RelatedCardIndex.Language,
+	return storage.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		card, err := findOrInitializeRelatedCards(tx, conditions.CardIndex)
+		if err != nil {
+			return err
+		}
+		relatedCard, err := findOrInitializeRelatedCards(tx, conditions.RelatedCardIndex)
+		if err != nil {
+			return err
+		}
+
+		if err := mergeAssociation(&card, conditions.RelatedCardIndex, conditions.Association, true); err != nil {
+			return err
+		}
+		if err := mergeAssociation(&relatedCard, conditions.CardIndex, conditions.Association, false); err != nil {
+			return err
+		}
+
+		if err := tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&card).Error; err != nil {
+			return err
+		}
+		return tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&relatedCard).Error
+	})
+}
+
+func findOrInitializeRelatedCards(db *gorm.DB, index protomodels.CardIndex) (gm.RelatedCards, error) {
+	card := gm.RelatedCards{Name: index.Name, Language: index.Language}
+	err := db.Where("name = ? AND language = ?", index.Name, index.Language).First(&card).Error
+	if err == nil || errors.Is(err, gorm.ErrRecordNotFound) {
+		return card, nil
 	}
-	relatedCard := protomodels.RelatedCards{
-		Index: &relatedCardIndex,
+	return gm.RelatedCards{}, err
+}
+
+func mergeAssociation(card *gm.RelatedCards, relatedIndex protomodels.CardIndex, association protomodels.AssociationTypes, forward bool) error {
+	serializedIndex := string(gm.NewRelatedCards(protomodels.RelatedCards{
+		Index:  &protomodels.CardIndex{},
+		Origin: &relatedIndex,
+	}).Origin)
+	appendUnique := func(values *gm.ArrayOfStrings) {
+		for _, value := range *values {
+			if value == serializedIndex {
+				return
+			}
+		}
+		*values = append(*values, serializedIndex)
 	}
 
-	switch conditions.Association {
+	switch association {
 	case protomodels.AssociationTypes_SYNONYMS:
-		card.Synonyms = append(card.Synonyms, &relatedCardIndex)
-		relatedCard.Synonyms = append(relatedCard.Synonyms, &cardIndex)
+		appendUnique(&card.Synonyms)
 	case protomodels.AssociationTypes_ANTONYMS:
-		card.Antonyms = append(card.Antonyms, &relatedCardIndex)
-		relatedCard.Antonyms = append(relatedCard.Antonyms, &cardIndex)
+		appendUnique(&card.Antonyms)
 	case protomodels.AssociationTypes_ORIGIN:
-		card.Origin = &relatedCardIndex
-		relatedCard.Derivatives = append(relatedCard.Derivatives, &cardIndex)
+		if forward {
+			card.Origin = serializedIndex
+		} else {
+			appendUnique(&card.Derivatives)
+		}
 	case protomodels.AssociationTypes_DERIVATIVES:
-		card.Derivatives = append(card.Derivatives, &relatedCardIndex)
-		relatedCard.Origin = &cardIndex
+		if forward {
+			appendUnique(&card.Derivatives)
+		} else {
+			card.Origin = serializedIndex
+		}
 	case protomodels.AssociationTypes_IN_OTHER_LANGUAGES:
-		card.InOtherLanguages = append(card.InOtherLanguages, &relatedCardIndex)
-		relatedCard.InOtherLanguages = append(relatedCard.InOtherLanguages, &cardIndex)
+		appendUnique(&card.InOtherLanguages)
 	case protomodels.AssociationTypes_OTHERS:
-		card.Others = append(card.Others, &relatedCardIndex)
-		relatedCard.Others = append(relatedCard.Others, &cardIndex)
+		appendUnique(&card.Others)
+	default:
+		return fmt.Errorf("unsupported association type: %d", association)
 	}
-
-	if err := storage.relatedCardsTable().
-		Clauses(clause.OnConflict{UpdateAll: true}).
-		Create(ctx, turnEmptySlicesToNilInRelatedCards(gm.NewRelatedCards(card))); err != nil {
-		return err
-	}
-
-	return storage.relatedCardsTable().
-		Clauses(clause.OnConflict{UpdateAll: true}).
-		Create(ctx, turnEmptySlicesToNilInRelatedCards(gm.NewRelatedCards(relatedCard)))
+	return nil
 }
 
 func turnEmptySlicesToNilInRelatedCards(rc gm.RelatedCards) gm.RelatedCards {

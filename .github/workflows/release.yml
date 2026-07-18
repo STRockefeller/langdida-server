@@ -3,69 +3,100 @@ name: Build and Release
 on:
   push:
     tags:
-      - '*'
+      - "*"
+
+permissions:
+  contents: read
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.3"
+          cache: true
+
+      - name: Test
+        run: go test ./...
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - artifact: langdida-server-linux-x64
+            goos: linux
+            goarch: amd64
+            cc: gcc
+            package: ""
+          - artifact: langdida-server-windows-x64.exe
+            goos: windows
+            goarch: amd64
+            cc: x86_64-w64-mingw32-gcc
+            package: gcc-mingw-w64-x86-64
+          - artifact: langdida-server-windows-x86.exe
+            goos: windows
+            goarch: "386"
+            cc: i686-w64-mingw32-gcc
+            package: gcc-mingw-w64-i686
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
-          go-version: 1.18
+          go-version: "1.22.3"
+          cache: true
 
-      - name: Build for Windows x64
-        run: GOOS=windows GOARCH=amd64 go build -o langdida-server-windows-x64.exe
+      - name: Install Windows cross-compiler
+        if: matrix.package != ''
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes "${{ matrix.package }}"
 
-      - name: Build for Windows x86
-        run: GOOS=windows GOARCH=386 go build -o langdida-server-windows-x86.exe
-
-      - name: Build for Linux
-        run: GOOS=linux GOARCH=amd64 go build -o langdida-server-linux
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Build ${{ matrix.artifact }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+          CGO_ENABLED: "1"
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CC: ${{ matrix.cc }}
+        run: |
+          mkdir -p dist
+          go build -trimpath -o "dist/${{ matrix.artifact }}" .
 
-      - name: Upload Windows x64 Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./langdida-server-windows-x64.exe
-          asset_name: langdida-server-windows-x64.exe
-          asset_content_type: application/octet-stream
+          name: ${{ matrix.artifact }}
+          path: dist/${{ matrix.artifact }}
+          if-no-files-found: error
 
-      - name: Upload Windows x86 Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./langdida-server-windows-x86.exe
-          asset_name: langdida-server-windows-x86.exe
-          asset_content_type: application/octet-stream
+          path: dist
+          merge-multiple: true
 
-      - name: Upload Linux Asset
-        uses: actions/upload-release-asset@v1
+      - name: Create GitHub release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./langdida-server-linux
-          asset_name: langdida-server-linux
-          asset_content_type: application/octet-stream
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: >-
+          gh release create "$GITHUB_REF_NAME" dist/*
+          --verify-tag
+          --generate-notes
